@@ -71,55 +71,54 @@ $$
 $$
 
 Dove:
-- $ A $ è la matrice di trasformazione
-- $ y $ è il vettore di dati osservati
-- $ x $ è la variabile da ricostruire
-- $ \lambda $ è il parametro di regularizzazione che bilancia il trade-off tra l'adattamento ai dati e la sparsità della soluzione.
+- $A$ è la matrice di trasformazione
+- $y$ è il vettore di dati osservati
+- $x$ è la variabile da ricostruire
+- $\lambda$ è il parametro di regularizzazione che bilancia il trade-off tra l'adattamento ai dati e la sparsità della soluzione.
 
-### Estensione di ISTA con penalizzazione Wavelet e funzione $ \Phi(x) $
+### Estensione di ISTA con penalizzazione Wavelet e funzione $\Phi(x)$
 
-L'ISTA tradizionale usa la penalizzazione $ \| x \|_1 $, ovvero la norma $ l_1 $ dei coefficienti dell'immagine. Tuttavia, come già citato il dominio che presenta miglior sparsità è Wavelet.
+L'ISTA tradizionale usa la penalizzazione $\| x \|_1$, ovvero la norma $l_1$ dei coefficienti dell'immagine. Tuttavia, come già citato il dominio che presenta miglior sparsità è Wavelet.
 L'uso delle Wavelet consente di rappresentare l'immagine in termini di una serie di coefficienti che possono essere sparsi. Una trasformata Wavelet scompone un'immagine in una serie di coefficienti a diverse risoluzioni, che descrivono la struttura dell'immagine a diverse scale.
 
-La funzione obiettivo dell'ISTA può quindi essere modificata per applicare la penalizzazione $ l_1 $ sui coefficienti Wavelet, piuttosto che sui valori dell'immagine. Questo porta al seguente problema:
+La funzione obiettivo dell'ISTA può quindi essere modificata per applicare la penalizzazione $l_1$ sui coefficienti Wavelet, piuttosto che sui valori dell'immagine. Questo porta al seguente problema:
 
-$$
-\min_x \frac{1}{2} \| A x - y \|^2_2 + \lambda \| W(x) \|_1
-$$
+$$\min_x \frac{1}{2} \| A x - y \|^2_2 + \lambda \| W(x) \|_1$$
 
-dove $ W(x) $ è la funzione Wavelet applicata all'immagine $ x $, e quindi la norma $ l_1 $ è ora applicata sui coefficienti Wavelet.
+dove $W(x)$ è la funzione Wavelet applicata all'immagine $x$, e quindi la norma $l_1$ è ora applicata sui coefficienti Wavelet.
 
 Nella versione tradizionale di ISTA, il modello di osservazione è descritto da un sistema lineare, in cui i dati osservati y sono ottenuti applicando una matrice A a un vettore $x$, ovvero $y=Ax+r$, dove $r$ è il rumore. In questo contesto, la matrice $A$ rappresenta un operatore che mappa il vettore $x$ nel dominio delle osservazioni $y$.
 
 La funzione di perdita in questo caso è
+
 $$​L(x)=\frac{1}{2} \|Φ(x)−y\|_2^2$$
+
 dove $Φ(x)$ rappresenta il processo che mappa l'immagine $x$ dal dominio spaziale al dominio delle frequenze tramite la FFT2D, applicando successivamente una maschera.
 
 Dovendo considerare nell'algoritmo ISTA il grdiente dell'errore $r$ da minimizzare, si ha che
+
 $$∇_x​L(x)=Φ_T(Φ(x)−y)$$
+
 dove $Φ_T$ consiste nell'applicazione della maschera e la successiva inversione della FFT2D.
 
 ### Passi iterativi dell'algoritmo
 
 Nel codice che hai fornito, vediamo che l'algoritmo segue una struttura molto simile a quella di ISTA con una penalizzazione basata sulle Wavelet:
 
-  1. **Passo di gradiente discendente**: viene calcolato il residuo $ r = y - \Phi(x) $, dove $ \Phi $ rappresenta la trasformazione legata alla FFT e alla maschera di undersampling. Successivamente, viene effettuato un passo di gradiente discendente:
-$$
-x^{k+1} = x^k - \alpha \nabla f(x^k) = x^k + \alpha \  \Phi_T(r)
-$$
+  1. **Passo di gradiente discendente**: viene calcolato il residuo $r = y - \Phi(x)$, dove $\Phi$ rappresenta la trasformazione legata alla FFT e alla maschera di undersampling. Successivamente, viene effettuato un passo di gradiente discendente:
 
-  2. **Passo di soft-thresholding sui coefficienti Wavelet**: dopo il passo di gradiente, il codice esegue una decomposizione Wavelet sull'immagine aggiornata $ x^{k+1} $; questa trasformazione scompone l'immagine in una serie di coefficienti a diversi livelli di risoluzione. Successivamente, il soft-thresholding è applicato a ciascun coefficiente: a questo punto, i coefficienti di piccole dimensioni sono ridotti a zero, portando a una soluzione più sparsa.
-  $$
-  z^{k+1} = wavelet(x^{k+1})
-  $$
-  $$
-  S_\lambda(z^{k+1}) = \text{sign}(z^{k+1}) \cdot \max(|z^{k+1}| - \lambda, 0)
-  $$
+  $$x^{k+1} = x^k - \alpha \nabla f(x^k) = x^k + \alpha \  \Phi_T(r)$$
+
+  2. **Passo di soft-thresholding sui coefficienti Wavelet**: dopo il passo di gradiente, il codice esegue una decomposizione Wavelet sull'immagine aggiornata $x^{k+1}$; questa trasformazione scompone l'immagine in una serie di coefficienti a diversi livelli di risoluzione. Successivamente, il soft-thresholding è applicato a ciascun coefficiente: a questo punto, i coefficienti di piccole dimensioni sono ridotti a zero, portando a una soluzione più sparsa.
+ 
+  $$z^{k+1} = wavelet(x^{k+1})$$
+  $$S_\lambda(z^{k+1}) = \text{sign}(z^{k+1}) \cdot \max(|z^{k+1}| - \lambda, 0)$$
+
   3. **Passo di ricostruzione dell'immagine**: una volta che i coefficienti Wavelet sono soggetti a soft-thresholding, l'immagine viene ricostruita attraverso l'inversa della trasformazione Wavelet:
-  $$
-  x^{k+1} = wavelet_T(S_\lambda(z^{k+1}))
-  $$
-  4. **Verifica della convergenza**: infine, il codice verifica la convergenza confrontando la differenza tra la soluzione corrente e quella precedente. Se la differenza è inferiore a una tolleranza $ \text{tol} $, o se il numero di iterazioni raggiunge una soglia, l'algoritmo si ferma. 
+     
+  $$x^{k+1} = wavelet_T(S_\lambda(z^{k+1}))$$
+  
+  3. **Verifica della convergenza**: infine, il codice verifica la convergenza confrontando la differenza tra la soluzione corrente e quella precedente. Se la differenza è inferiore a una tolleranza $\text{tol}$, o se il numero di iterazioni raggiunge una soglia, l'algoritmo si ferma. 
 
 ### Codice dell'algoritmo
 
@@ -207,9 +206,9 @@ Questo può essere formulato come un problema di ottimizzazione che minimizza la
 
 
 In forma primale, il problema si pone come
-$$
-\min_x \frac{1}{2} \| mask \ (FFT2D(x) - k) \|^2_2 + \lambda*TV(x)
-$$
+
+$$\min_x \frac{1}{2} \| mask \ (FFT2D(x) - k) \|^2_2 + \lambda*TV(x)$$
+
 dove:
 - $mask$ è la maschera di campionamento, una matrice che conserva i valori di k-spazio osservati e ignora quelli non misurati.
 - $FFT2D(x)$ è la trasformata di Fourier dell'immagine $x$, che permette di confrontarla con i dati $k$ nel dominio k-spazio.
@@ -222,9 +221,9 @@ dove:
 
 
 In forma primale-duale, il problema diventa:
-$$
-\min_{x, z} \frac{1}{2} \| mask \ (FFT2D(x) - k) \|^2_2 + \lambda*TV(x)\ \ \ \ \ \ \ s.t\ \ \ x = z
-$$
+
+$$\min_{x, z} \frac{1}{2} \| mask \ (FFT2D(x) - k) \|^2_2 + \lambda*TV(x)\ \ \ \ \ \ \ s.t\ \ \ x = z$$
+
 che si risolve in modalità iterativa tramite ADMM:
 - aggiornamento di $x$: minimizza il termine di fedeltà ai dati mantenendo fisso $z$ e $u$.
 - aggiornamento di $z$: minimizza il termine di variazione totale, effettuando una regolarizzazione TV.
@@ -334,13 +333,13 @@ Le Wavelet forniscono un modo potente di rappresentare i dati dell'immagine con 
 L'algoritmo ADMM con regularizzazione Wavelet differisce da quello con regularizzazione TV  nella fase di regolarizzazione. Invece di applicare una penalizzazione sui gradienti dell'immagine (come nel caso del TV), applica una sogliatura ai coefficienti di Wavelet dell'immagine.
 
 In forma primale, il problema si pone come
-$$
-\min_x \frac{1}{2} \| mask*(FFT2D(x) - y) \|^2_2 + \lambda \| W(x) \|_1\ \ \
-$$
+
+$$\min_x \frac{1}{2} \| mask*(FFT2D(x) - y) \|^2_2 + \lambda \| W(x) \|_1\ \ \$$
+
 mentre in forma primale-duale
-$$
-\min_{x, z} \frac{1}{2} \| mask*(FFT2D(x) - y) \|^2_2 + \lambda \| z \|_1\ \ \ \ \ \ \ s.t\ \ \ W(x) = z
-$$
+
+$$\min_{x, z} \frac{1}{2} \| mask*(FFT2D(x) - y) \|^2_2 + \lambda \| z \|_1\ \ \ \ \ \ \ s.t\ \ \ W(x) = z$$
+
 che si risolve in modalità iterativa tramite ADMM:
 - passo di fedeltà, come esposto nel caso TV.
 - passo di regolarizzazione: in questo caso si applica il denoising basato su Wavelet. Questo passaggio sfrutta la decomposizione Wavelet dell'immagine, applica la sogliatura ai coefficienti di dettaglio e ricostruisce l'immagine utilizzando i coefficienti sogliati.
