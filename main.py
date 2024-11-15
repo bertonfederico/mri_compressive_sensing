@@ -8,7 +8,7 @@ from masks.gaussian_mask import generate_gaussian_mask
 from domain_transforms.fft_transforms import ifft2c, fft2c
 from domain_transforms.phi_functions import Phi
 from iterative_algorithms import ISTA_reconstruction, ADMM_TV_reconstruction, ADMM_wavelet_reconstruction
-from mri_images.compression_results import plot_results, print_results
+import mri_images.compression_results as plot_functions
 
 
 
@@ -46,6 +46,10 @@ y_gaussian = Phi(img_original, gaussian_mask)                                   
 img_no_reconstruction_gaussian = ifft2c(y_gaussian)                                        # Direct inverse FFT without reconstruction
 mse_ifft_gaussian = np.mean((img_original - np.abs(img_no_reconstruction_gaussian)) ** 2)  # MSE without reconstruction
 
+plot_functions.plot_masks(random_mask, random_mask_percentage, gaussian_mask, gaussian_mask_percentage, img_original)
+plot_functions.plot_compressed_images(img_original, img_no_reconstruction_random, random_mask_percentage*100, img_no_reconstruction_gaussian, gaussian_mask_percentage)
+
+
 
 
 ##################################################################
@@ -53,7 +57,7 @@ mse_ifft_gaussian = np.mean((img_original - np.abs(img_no_reconstruction_gaussia
 ##################################################################
 # ISTA reconstruction parameters
 lam = 0.01              # Regularization parameter for sparsity
-max_iter = 100          # Maximum number of ISTA iterations
+max_iter = 5000         # Maximum number of ISTA iterations
 tol = 1e-20             # Convergence tolerance
 step_size = 1           # Step size for the ISTA update
 
@@ -64,8 +68,8 @@ mse_ista = np.mean((img_original - np.abs(img_reconstructed_ista)) ** 2)
 # Print MSE and plot images
 recon_type = "ISTA with Wavelet - random mask"
 variable_setting = f"Lambda: {lam}; Iterations: {iterations}; Step-size: {step_size}"
-print_results(recon_type, variable_setting, mse_ista, mse_ifft_random)
-plot_results(img_original, img_no_reconstruction_random, img_reconstructed_ista, mse_ifft_random, mse_ista, random_mask_percentage, random_mask, recon_type)
+plot_functions.print_results(recon_type, variable_setting, mse_ista, mse_ifft_random)
+plot_functions.plot_results(img_original, img_no_reconstruction_random, img_reconstructed_ista, mse_ista, recon_type)
 
 
 
@@ -76,7 +80,7 @@ plot_results(img_original, img_no_reconstruction_random, img_reconstructed_ista,
 ##################################################################
 # ISTA reconstruction parameters
 lam = 0.01             # Regularization parameter for sparsity
-max_iter = 100         # Maximum number of ISTA iterations
+max_iter = 5000        # Maximum number of ISTA iterations
 tol = 1e-7             # Convergence tolerance
 step_size = 1          # Step size for the ISTA update
 
@@ -87,8 +91,8 @@ mse_ista = np.mean((img_original - np.abs(img_reconstructed_ista)) ** 2)
 # Print MSE and plot images
 recon_type = "ISTA with Wavelet - Gaussian mask"
 variable_setting = f"Lambda: {lam}; Iterations: {iterations}; Step-size: {step_size}"
-print_results(recon_type, variable_setting, mse_ista, mse_ifft_gaussian)
-plot_results(img_original, img_no_reconstruction_gaussian, img_reconstructed_ista, mse_ifft_gaussian, mse_ista, gaussian_mask_percentage, gaussian_mask, recon_type)
+plot_functions.print_results(recon_type, variable_setting, mse_ista, mse_ifft_gaussian)
+plot_functions.plot_results(img_original, img_no_reconstruction_gaussian, img_reconstructed_ista, mse_ista, recon_type)
 
 
 
@@ -101,17 +105,17 @@ plot_results(img_original, img_no_reconstruction_gaussian, img_reconstructed_ist
 wavelet='db1'        # Wavelet type
 level=4              # Wavelet level
 threshold=0.1        # Threshold
-max_iter = 500       # Maximum number of ADMM iterations
+max_iter = 5000      # Maximum number of ADMM iterations
 
 # Reconstruct the image using ADMM
-img_reconstructed_ista = ADMM_wavelet_reconstruction.admm_mri_wavelet_reconstruction(y_gaussian, gaussian_mask, num_iters=max_iter)
-mse_ista = np.mean((img_original - np.abs(img_reconstructed_ista)) ** 2)
+img_reconstructed_admm = ADMM_wavelet_reconstruction.admm_mri_wavelet_reconstruction(y_gaussian, gaussian_mask, num_iters=max_iter)
+mse_admm = np.mean((img_original - np.abs(img_reconstructed_admm)) ** 2)
 
 # Print MSE and plot images
 recon_type = "ADMM with Wavelet - Gaussian mask"
 variable_setting = f"Wavelet: {wavelet} - level {level}; Threshold: {threshold}; Max iterations: {max_iter};"
-print_results(recon_type, variable_setting, mse_ista, mse_ifft_gaussian)
-plot_results(img_original, img_no_reconstruction_gaussian, img_reconstructed_ista, mse_ifft_gaussian, mse_ista, gaussian_mask_percentage, gaussian_mask, recon_type)
+plot_functions.print_results(recon_type, variable_setting, mse_admm, mse_ifft_gaussian)
+plot_functions.plot_results(img_original, img_no_reconstruction_gaussian, img_reconstructed_admm, mse_admm, recon_type)
 
 
 
@@ -125,13 +129,11 @@ lam = 0.1             # Regularization parameter for sparsity
 max_iter = 100        # Maximum number of ADMM iterations
 
 # Reconstruct the image using ADMM
-img_reconstructed_ista = ADMM_TV_reconstruction.admm_mri_tv_reconstruction(y_gaussian, gaussian_mask, lam, max_iter)
-mse_ista = np.mean((img_original - np.abs(img_reconstructed_ista)) ** 2)
+img_reconstructed_admm = ADMM_TV_reconstruction.admm_mri_tv_reconstruction(y_gaussian, gaussian_mask, lam, max_iter)
+mse_admm = np.mean((img_original - np.abs(img_reconstructed_admm)) ** 2)
 
 # Print MSE and plot images
 recon_type = "ADMM with TV - Gaussian mask"
 variable_setting = f"Lambda: {lam}; Max iterations: {max_iter};"
-print_results(recon_type, variable_setting, mse_ista, mse_ifft_gaussian)
-plot_results(img_original, img_no_reconstruction_gaussian, img_reconstructed_ista, mse_ifft_gaussian, mse_ista, gaussian_mask_percentage, gaussian_mask, recon_type)
-
-
+plot_functions.print_results(recon_type, variable_setting, mse_admm, mse_ifft_gaussian)
+plot_functions.plot_results(img_original, img_no_reconstruction_gaussian, img_reconstructed_admm, mse_admm, recon_type)
