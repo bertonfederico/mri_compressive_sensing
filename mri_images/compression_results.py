@@ -34,7 +34,6 @@ def plot_masks(random_mask, random_mask_percentage, gaussian_mask, gaussian_mask
     plt.imshow(random_mask)
     plt.title(f"Random mask  -  {random_mask_percentage:.2f} %")
     plt.axis('off')
-    plt.axis('off')
     plt.subplot(2, 3, 3)
     plt.imshow(gaussian_mask)
     plt.title(f"Gaussian mask  -  {gaussian_mask_percentage:.2f} %")

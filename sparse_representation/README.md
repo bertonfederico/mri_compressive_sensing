@@ -92,7 +92,7 @@ Come nel caso monodimensionale, anche nel caso bidimensionale la complessità co
 
 Per questo motivo, in python viene usualmente utilizzata la libreria *scipy.fft*.
 
-La dimensione della matrice $s$ risultante rimane invariata rispetto alla matrice dell'immagine di partenza, mentre la sparsità (ovvero la percentuale di valori al di sotto di $ϵ = 0.1$) risulta essere intorno al $90.0 % $.
+La dimensione della matrice $s$ risultante rimane invariata rispetto alla matrice dell'immagine di partenza, mentre la sparsità (ovvero la percentuale di valori al di sotto di $ϵ = 0.1$) risulta essere intorno al $90.0 \% $.
 
 # Applicazione alla trasformata di Wavelet
 
@@ -166,4 +166,4 @@ plt.show()
 In sintesi, i risultati di questo algoritmo sono i seguenti:
 - la complessità computazionale, in vantaggio rispetto a FFT2D, risulta $O(N*M*)$.
 - la dimensione delle matrici di risultato (LL, LH, HL, HH) dimezza ad ogni iterazione.
-- la sparsità di segnali MRI, rispetto a $ϵ = 0.1$, risulta essere intorno al $0.45 %$.
+- la sparsità di segnali MRI, rispetto a $ϵ = 0.1$, risulta essere intorno al $0.45 \%$.

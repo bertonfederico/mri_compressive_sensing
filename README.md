@@ -2,32 +2,6 @@
 
 In molte applicazioni, specialmente nella **ricostruzione delle immagini MRI**, è comune ridurre drasticamente la quantità di dati da acquisire, riducendo la risoluzione spaziale dell'immagine originale. Questo approccio viene comunemente chiamato **undersampling** o **campionamento incompleto**. La riduzione dei dati si traduce in una compressione dell'immagine, mantenendo solo una parte delle informazioni originali, ma preservando la qualità dell'immagine finale dopo un opportuno processo di ricostruzione.
 
-### Campionamento nel dominio di Fourier (k-space e FFT2D)
-
-Nel caso delle immagini MRI, i dati acquisiti non sono direttamente immagini spaziali, ma sono misurazioni in quello che viene chiamato il **k-space**. Il k-space è una rappresentazione della frequenza spaziale dell'immagine, che descrive come le varie frequenze (o modelli spaziali) sono distribuite nell'immagine. Per ottenere l'immagine finale, i dati nel k-space devono essere trasformati nel dominio spaziale tramite l'inversa della trasformata di Fourier.
-
-La **trasformata dapida di Fourier bidimensionale** (**FFT2D**) è una tecnica matematica utilizzata per trasformare un'immagine dal dominio spaziale al dominio delle frequenze spaziali (k-space per le immagini MRI). Questa trasformazione consente di rappresentare un'immagine come una combinazione di frequenze (componenti ad alta e bassa frequenza) anziché come una distribuzione di intensità spaziale.
-
-In termini matematici, la **FFT2D** di un'immagine $f(x, y)$ (con $x$ e $y$ che rappresentano le coordinate spaziali dell'immagine) è data da:
-
-$$
-F(u, v) = \sum_{x=0}^{M-1} \sum_{y=0}^{N-1} f(x, y) e^{-j2\pi \left(\frac{ux}{M} + \frac{vy}{N}\right)}
-$$
-
-Dove:
-- $F(u, v)$ sono i coefficienti nel dominio delle frequenze,
-- $f(x, y)$ è il valore del pixel nell'immagine spaziale,
-- $M$ e $N$ sono le dimensioni dell'immagine,
-- $u$ e $v$ rappresentano le frequenze spaziali nelle direzioni $x$ e $y$,
-- $j$ è l'unità immaginaria.
-
-Quando un'immagine è trasformata nel dominio delle frequenze con la FFT2D, essa viene rappresentata come una combinazione di frequenze basse e frequenze alte:
-
-- **Frequenze basse**: Si trovano vicino al centro del dominio delle frequenze e rappresentano le informazioni globali dell'immagine, come forme, contorni e altre strutture larghe e morbide.
-- **Frequenze alte**: Si trovano più lontano dal centro e rappresentano i dettagli fini, come i bordi, le texture e il rumore.
-
-La frequenza si riferisce alla quantità di variazione spaziale nell'immagine: basse frequenze corrispondono a variazioni lente e ampie, mentre le alte frequenze rappresentano cambiamenti rapidi, come bordi o dettagli molto piccoli.
-
 ### Campionamento random o Gaussiano rispetto al centro
 
 Una tecnica comune per ridurre la quantità di dati acquisiti è campionare selettivamente il k-space, ossia acquisire solo alcuni punti di questo dominio invece di raccogliere tutti i dati. Questo processo è realizzato tramite l'uso di una **maschera di campionamento** che mantiene solo una frazione dei punti originali nel k-space.
