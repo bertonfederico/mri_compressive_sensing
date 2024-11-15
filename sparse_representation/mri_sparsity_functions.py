@@ -23,7 +23,7 @@ if image.ndim == 3:
 img_original = resize(image, (256, 256), anti_aliasing=True)
 
 
-'''
+
 
 ##################################################################
 ####################### Fourier matrix (Ψ) #######################
@@ -69,44 +69,16 @@ sparsity = non_zero_coeffs / total_coeffs
 print(sparsity)
 
 
-'''
+
 
 ##################################################################
 ####################### Wavelet matrix (Ψ) #######################
 ##################################################################
 coeffs = pywt.wavedec2(image, wavelet='db1', level=4)
 
-
-
-
-
-coeffs2 = pywt.wavedec2(image, 'db1', level=4)
-
-# Estrai il coefficiente LL e i dettagli LH, HL, HH per ciascun livello
-LL = coeffs2[0]  # Bassa frequenza, il primo elemento
-detail_coeffs = coeffs2[1:]  # Dettagli per ciascun livello
-
-# Calcola il numero totale di coefficienti (somma delle dimensioni)
-total_coeffs = sum([c.size for c in [LL] + [item for sublist in detail_coeffs for item in sublist]])
-
-# Calcola il numero di coefficienti nulli (con una soglia)
-epsilon = 0.1  # Soglia per considerare un coefficiente nullo
-null_coeffs = np.sum(np.abs(LL) < epsilon)  # Coefficienti nulli per LL
-for level in detail_coeffs:
-    for coeff in level:
-        null_coeffs += np.sum(np.abs(coeff) < epsilon)  # Somma dei coefficienti nulli per ogni livello
-
-# Calcola la sparsità
-sparsity = null_coeffs / total_coeffs
-
-# Mostra i risultati
-print(f"Numero totale di coefficienti: {total_coeffs}")
-print(f"Numero di coefficienti nulli: {null_coeffs}")
-print(f"Sparsità: {sparsity:.4f}")
-
 # Creating the figure to display the results
 fig, axs = plt.subplots(4, 4, figsize=(12, 12))
-
+plt.suptitle("Wavelet iterations")
 for i in range(1, len(coeffs)):
     # Extract details for each layer
     c = coeffs[i]
