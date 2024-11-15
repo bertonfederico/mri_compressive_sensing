@@ -34,11 +34,8 @@ Una tecnica comune per ridurre la quantità di dati acquisiti è campionare sele
 Il campionamento nel k-space avviene in questi esempi con **campionamento random** o **campionamento gaussiano**. Entrambi questi metodi preservano la struttura centrale del k-space e rimuovono i punti più periferici. Questo approccio ha un'importante motivazione teorica legata alla natura delle immagini MRI e alla trasformata di Fourier bidimensionale (FFT2D).
 Le informazioni principali di un'immagine (cioè le componenti spaziali più significative) sono concentrate principalmente intorno al centro del k-space. Pertanto, campionare in modo gaussiano intorno al centro è molto efficace per preservare le caratteristiche principali dell'immagine.
 
-<div style="display: flex; justify-content: space-between;">
-  <img src="https://github.com/user-attachments/assets/734ad505-2bef-4bdd-bc54-2b3cd7ee672b" width="45%" />
-  <img src="https://github.com/user-attachments/assets/923337dc-565f-4ead-bedc-3ffd0a7ccf71" width="45%" />
-</div>
-
+![Figure_1](https://github.com/user-attachments/assets/53d13c4a-46ae-45e8-8b60-ac39a6c7d269)
+![Figure_1](https://github.com/user-attachments/assets/2adab7a7-36b2-4d39-83d0-45fb4bed9546)
 
 
 ## Wavelet per la decompressione
