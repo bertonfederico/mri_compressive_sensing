@@ -166,6 +166,6 @@ plt.show()
 ![Figure_1](https://github.com/user-attachments/assets/36834fa4-267d-4f00-9806-54a9cccf42b0)
 
 In sintesi, i risultati di questo algoritmo sono i seguenti:
-- la complessità computazionale, in vantaggio rispetto a FFT2D, risulta $O(N*M*)$.
+- la complessità computazionale, in vantaggio rispetto a FFT2D, risulta $O(N*M)$.
 - la dimensione delle matrici di risultato (LL, LH, HL, HH) dimezza ad ogni iterazione.
 - la sparsità di segnali MRI, rispetto a $ϵ = 0.1$, risulta essere intorno al $0.45 \%$.
