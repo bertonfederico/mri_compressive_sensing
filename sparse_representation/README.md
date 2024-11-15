@@ -85,6 +85,7 @@ s = np.dot(Psi_row.conj().T, np.dot(image, Psi_col.T))
 # Image reconstruction
 image_reconstructed = np.real(np.dot(Psi_row, np.dot(s, Psi_col.conj().T)))
 ```
+![Figure_1](https://github.com/user-attachments/assets/f2b5a0af-b0f0-4d23-86f0-90838bbeda84)
 
 Come nel caso monodimensionale, anche nel caso bidimensionale la complessità computazionale risulta migliore utilizzando FFT2D. Se la matrice di pixel su cui applicare la trasformata è di dimensione, si ha una complessità:
 - DFT2D: $O(M^2*N^2)$
@@ -162,6 +163,7 @@ for i in range(1, len(coeffs)):
 plt.tight_layout()
 plt.show()
 ```
+![Figure_1](https://github.com/user-attachments/assets/36834fa4-267d-4f00-9806-54a9cccf42b0)
 
 In sintesi, i risultati di questo algoritmo sono i seguenti:
 - la complessità computazionale, in vantaggio rispetto a FFT2D, risulta $O(N*M*)$.
