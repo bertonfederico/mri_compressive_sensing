@@ -115,7 +115,8 @@ dct_total_size = dct_result.size
 ######################### Visualization ##########################
 ##################################################################
 # Visualize the results of the three transforms (no threshold applied here)
-fig, axs = plt.subplots(1, 3, figsize=(18, 6))
+fig, axs = plt.subplots(1, 3, figsize=(18, 4))
+fig.suptitle("Comparison: FFT2D, Wavelet-LL, DCT", fontsize = 20)
 
 # FFT
 axs[0].imshow(np.log(np.abs(fft_result) + 1), cmap='hot')

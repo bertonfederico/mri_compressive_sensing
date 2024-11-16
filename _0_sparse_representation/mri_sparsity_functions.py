@@ -42,7 +42,7 @@ s = np.dot(Psi_row.conj().T, np.dot(image, Psi_col.T))
 
 # Image reconstruction
 image_reconstructed = np.real(np.dot(Psi_row, np.dot(s, Psi_col.conj().T)))
-plt.figure(figsize=(12, 6))
+plt.figure(figsize=(12, 4))
 plt.suptitle("FFT2D sparsity", fontsize=30)
 plt.subplot(1, 2, 1)
 plt.imshow(image, cmap='gray')
