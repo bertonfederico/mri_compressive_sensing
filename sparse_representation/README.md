@@ -78,7 +78,7 @@ s = np.dot(Psi_row.conj().T, np.dot(image, Psi_col.T))
 # Image reconstruction
 image_reconstructed = np.real(np.dot(Psi_row, np.dot(s, Psi_col.conj().T)))
 ```
-![Figure_1](https://github.com/user-attachments/assets/f2b5a0af-b0f0-4d23-86f0-90838bbeda84)
+![Figure_13](https://github.com/user-attachments/assets/c0033707-04f4-4b09-957d-ed848eff6760)
 
 
 # Trasformata di Wavelet 2D
@@ -142,12 +142,7 @@ for i in range(1, len(coeffs)):
 plt.tight_layout()
 plt.show()
 ```
-![Figure_1](https://github.com/user-attachments/assets/36834fa4-267d-4f00-9806-54a9cccf42b0)
-
-In sintesi, i risultati di questo algoritmo sono i seguenti:
-- la complessità computazionale, in vantaggio rispetto a FFT2D, risulta $O(N*M)$.
-- la dimensione delle matrici di risultato (LL, LH, HL, HH) dimezza ad ogni iterazione.
-- la sparsità di segnali MRI, rispetto a $ϵ = 0.1$, risulta essere intorno al $0.45 \%$.
+![Figure_11](https://github.com/user-attachments/assets/bda5d0b1-90de-4178-8be5-62bb49e10077)
 
 
 # Trasformata Discreta del Coseno 2D
@@ -209,12 +204,15 @@ dct_transform(block_size=256, image_wind=4)
 plt.show()
 ```
 
+![Figure_12](https://github.com/user-attachments/assets/652e4226-5169-408e-bf5b-4d1885490f2e)
+
+
 ## Confronto tra FFT2D, Wavelet e DCT: sparsità e complessità computazionale
 
 Nel contesto del sensing sparso e della compressione delle immagini, è stato effettuato un confronto tra tre trasformate: FFT2D, e DCT. L'obiettivo del confronto è analizzare le seguenti caratteristiche:
 
 1. **Sparsità delle trasformate**
-2. **Complesso computazionale**
+2. **Complessità computazionale**
 
 Le tre trasformate sono state applicate all'immagine senza suddividerla in blocchi, essendo di fatto la modalità di esecuzione in ambito clinico.
 
@@ -224,7 +222,7 @@ La sparsità di una trasformata è misurata come la percentuale di valori normal
 
 $$Sparsità = \frac{\text{Numero di elementi sotto la soglia}}{\text{Numero totale di elementi}} \times 100$$
 
-### 2. **Complesso Computazionale**
+### 2. **Complessità computazionale**
 
 La complessità computazionale di ciascuna trasformata è stata misurata in termini di tempo di esecuzione. La complessità di ciascun metodo, espressa in notazione O-grande, è la seguente:
 
@@ -264,6 +262,9 @@ Al contrario, nelle trasformate FFT e DCT, con threshold pari a zero, i coeffici
 | Wavelet2D | 0.001       | 61.69                 | 65536               
 | DCT2D     | 0           | 0.00                  | 65536                
 | DCT2D     | 0.001       | 71.95                 | 65536                
+
+
+![Figure_1](https://github.com/user-attachments/assets/fd645493-db7f-4d98-b5e2-0c8b6a5cf3dc)
 
 
 
