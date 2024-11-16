@@ -249,9 +249,9 @@ La complessità computazionale di ciascuna trasformata è stata misurata in term
 
 ### Risultati
 
-Come si può notare, la Wavelet presenta una peculiarità: con un threshold pari a zero, molti dei suoi coefficienti sono esattamente nulli, il che comporta un valore di sparsità relativamente basso anche quando la soglia è molto piccola. Tuttavia, aumentando il valore del threshold (da 0 a 0.001), la sparsità non aumenta in modo significativo, mantenendo un buon numero di coefficienti significativi anche con threshold elevati.
+Come si può notare, la Wavelet presenta una peculiarità: con un threshold pari a zero, molti dei suoi coefficienti sono esattamente nulli, il che comporta un valore di sparsità relativamente alto anche quando la soglia è nulla. 
 
-Al contrario, nelle trasformate FFT e DCT, con threshold pari a zero, i coefficienti sono esattamente nulli. Quando si aumenta il valore del threshold, c'è un picco nella sparsità: molti coefficienti vengono eliminati, portando a una riduzione marcata della quantità di dati significativi e aumentando la sparsità in modo considerevole. 
+Al contrario, nelle trasformate FFT e DCT, con threshold pari a zero nessun coefficiente rientra in tale range. Quando si aumenta il valore del threshold, c'è un picco nella sparsità: molti coefficienti vengono eliminati, portando a una riduzione marcata della quantità di dati significativi e aumentando la sparsità in modo considerevole. 
 
 
 | Method    | Threshold   | Below Threshold (%)   | Total Size  
