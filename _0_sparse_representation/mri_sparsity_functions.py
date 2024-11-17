@@ -21,7 +21,7 @@ if image.ndim == 3:
     image = rgb2gray(image)
 
 # Resize image to desired dimensions (256x256) with anti-aliasing
-img_original = resize(image, (256, 256), anti_aliasing=True)
+image = resize(image, (256, 256), anti_aliasing=True)
 
 
 
