@@ -27,7 +27,7 @@ Una volta eseguito il campionamento del k-space, è importante considerare come 
 
 - **Modalità gaussiana e casuale**: per queste due modalità, si potrebbe utilizzare una maschera di campionamento fissa. In altre parole, la stessa maschera di campionamento potrebbe essere utilizzata ogni volta, il che eliminerebbe la necessità di trasmettere informazioni aggiuntive su come i dati siano stati campionati. Questa soluzione semplificherebbe la gestione dei dati dopo il campionamento.
 
-- **Modalità di Selezione dei Valori Più Alti**: nel caso del campionamento basato sulla selezione dei valori più alti, è necessario in qualche modo condividere informazioni aggiuntive riguardo alla posizione dei valori campionati nel k-space. Poiché i valori vengono selezionati in modo non uniforme, è necessario sapere esattamente quali coefficienti sono stati scelti per poter ricostruire correttamente l'immagine.
+- **Modalità di selezione dei valori più significativi**: nel caso del campionamento basato sulla selezione dei valori più alti, è necessario in qualche modo condividere informazioni aggiuntive riguardo alla posizione dei valori campionati nel k-space. Poiché i valori vengono selezionati in modo non uniforme, è necessario sapere esattamente quali coefficienti sono stati scelti per poter ricostruire correttamente l'immagine.
 
 Per affrontare questa necessità, sono state testate due modalità per rappresentare i dati campionati:
 
@@ -54,11 +54,12 @@ Per affrontare questa necessità, sono state testate due modalità per rappresen
   </tr>
   <tr>
     <td>Memory saved percentage (COO)</td>
-    <td>15.00%</td>
+    <td>85.00%%</td>
   </tr>
   <tr>
     <td>Memory saved percentage (RLE)</td>
-    <td>25.14%</td>
+    <td>74.86%</td>
   </tr>
 </table>
 
+Ne risulta che, applicando un campionamento del 10% dei valori massimi nel k-space, si può trasmettere solo una frazione molto ridotta dei dati originali, ovvero circa il 15% nel caso della codifica COO e circa il 25% nel caso della codifica RLE.

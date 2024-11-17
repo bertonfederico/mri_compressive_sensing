@@ -75,5 +75,5 @@ original_size = fft_image_shifted.nbytes  # Memory occupied by the original FFT2
 print(f"Original size of FFT2D (in bytes): {original_size}")
 print(f"Size of COO sparse matrix (in bytes): {coo_size}")
 print(f"Size of RLE compressed data (in bytes): {rle_size}")
-print(f"Memory saved percentage (COO): {(1-(original_size - coo_size)/original_size)*100:.2f}%")
-print(f"Memory saved percentage (RLE): {(1-(original_size - rle_size)/original_size)*100:.2f}%")
+print(f"Memory saved percentage (COO): {(original_size - coo_size)/original_size*100:.2f}%")
+print(f"Memory saved percentage (RLE): {(original_size - rle_size)/original_size*100:.2f}%")
