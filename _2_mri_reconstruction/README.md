@@ -2,6 +2,9 @@
 
 In questa sezione, dopo aver completato la rappresentazione sparsa dell'immagine e il relativo campionamento nel dominio della trasformata, viene analizzata la ricostruzione dell'immagine originale. L'obiettivo è ottenere un'approssimazione accurata dell'immagine di partenza utilizzando diversi algoritmi di ottimizzazione: ISTA (Iterative Shrinkage-Thresholding Algorithm) e ADMM (Alternating Direction Method of Multipliers), applicandoli con tecniche di regolarizzazione basate su Total Variation e su Wavelet Transform. Questi algoritmi permettono di sfruttare le proprietà sparse dell'immagine nel dominio di FFT per ricostruirla efficacemente anche da dati sottocampionati.
 
+
+
+
 ## ISTA (Iterative Shrinkage-Thresholding algorithm)
 
 L'algoritmo **ISTA** è una tecnica iterativa utilizzata per risolvere problemi di ottimizzazione in cui si cerca di minimizzare una funzione obiettivo composta da due termini principali:
