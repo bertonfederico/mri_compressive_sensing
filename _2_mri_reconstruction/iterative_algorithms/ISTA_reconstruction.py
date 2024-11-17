@@ -1,7 +1,6 @@
 import numpy as np
 import pywt
-from domain_transforms.phi_functions import Phi, Phi_T
-from domain_transforms.fft_transforms import fft2c, ifft2c
+from .fft_transforms import Phi, Phi_T
 
 # Soft-thresholding function for sparsity regularization
 def soft_thresholding(x, threshold):
@@ -42,12 +41,11 @@ def ISTA_MRI_reconstruction(y, mask, lam=0.01, max_iter=100, tol=1e-5, step_size
     """
     
     # Initialize the reconstructed image with the zero-filled back-projection of y
-    x_or = Phi_T(y, mask)
-    x = np.copy(x_or)
+    x = np.copy(Phi_T(y, mask))
     iterations = 0
     
 
-    for k in range(max_iter):
+    for _ in range(max_iter):
         # Compute the residual in k-space and perform a gradient step
         r = y - Phi(x, mask)
         x_new = x + step_size * Phi_T(r, mask)

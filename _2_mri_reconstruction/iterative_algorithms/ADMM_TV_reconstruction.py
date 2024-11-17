@@ -1,5 +1,5 @@
 import numpy as np
-from domain_transforms.fft_transforms import fft2c, ifft2c
+from .fft_transforms import fft2c, ifft2c
 
 def _total_variation(image, weight, num_iters=100, tau=0.125):
     """

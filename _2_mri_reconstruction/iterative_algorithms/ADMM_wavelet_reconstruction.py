@@ -1,6 +1,6 @@
 import numpy as np
 import pywt
-from domain_transforms.fft_transforms import ifft2c, fft2c
+from .fft_transforms import ifft2c, fft2c
 
 def wavelet_denoise(image, wavelet='db1', level=4, threshold=0.1):
     """

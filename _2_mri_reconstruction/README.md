@@ -1,35 +1,6 @@
-## Campionamento dei dati per la compressione delle immagini
+# Ricostruzione dell'immagine originale
 
-In molte applicazioni, specialmente nella **ricostruzione delle immagini MRI**, è comune ridurre drasticamente la quantità di dati da acquisire, riducendo la risoluzione spaziale dell'immagine originale. Questo approccio viene comunemente chiamato **undersampling** o **campionamento incompleto**. La riduzione dei dati si traduce in una compressione dell'immagine, mantenendo solo una parte delle informazioni originali, ma preservando la qualità dell'immagine finale dopo un opportuno processo di ricostruzione.
-
-### Campionamento random o Gaussiano rispetto al centro
-
-Una tecnica comune per ridurre la quantità di dati acquisiti è campionare selettivamente il k-space, ossia acquisire solo alcuni punti di questo dominio invece di raccogliere tutti i dati. Questo processo è realizzato tramite l'uso di una **maschera di campionamento** che mantiene solo una frazione dei punti originali nel k-space.
-Il campionamento nel k-space avviene in questi esempi con **campionamento random** o **campionamento gaussiano**. Entrambi questi metodi preservano la struttura centrale del k-space e rimuovono i punti più periferici. Questo approccio ha un'importante motivazione teorica legata alla natura delle immagini MRI e alla trasformata di Fourier bidimensionale (FFT2D).
-Le informazioni principali di un'immagine (cioè le componenti spaziali più significative) sono concentrate principalmente intorno al centro del k-space. Pertanto, campionare in modo gaussiano intorno al centro è molto efficace per preservare le caratteristiche principali dell'immagine.
-
-![Figure_1](https://github.com/user-attachments/assets/53d13c4a-46ae-45e8-8b60-ac39a6c7d269)
-![Figure_1](https://github.com/user-attachments/assets/2adab7a7-36b2-4d39-83d0-45fb4bed9546)
-
-
-## Wavelet per la decompressione
-
-Le **Wavelet** sono una famiglia di funzioni matematiche che consentono di analizzare un segnale a diverse risoluzioni, e permettono di esaminare il contenuto di un segnale (o immagine) sia a livello globale che nei dettagli più fini. Questo le rende particolarmente utili per applicazioni come il compressione dei dati e la ricostruzione di immagini.
-
-Una **trasformazione Wavelet** è una trasformazione che permette di rappresentare un segnale in termini di componenti a diverse frequenze e risoluzioni. Mentre la FFT divide il segnale in componenti sinusoidali a frequenza fissa, la trasformazione Wavelet permette una localizzazione sia nel dominio delle frequenze che in quello del tempo o spazio. A differenza della FFT, che non fornisce informazioni temporali o spaziali (le componenti sono globali), le Wavelet sono in grado di localizzare le frequenze sia in tempo che in spazio. Le Wavelet possono essere utilizzate per analizzare i dettagli fini di un'immagine, concentrandosi su piccole scale o su grandi scale.
-
-Nel contesto delle immagini, la **Trasformazione Wavelet Discreta** è la versione discreta e computazionalmente efficiente della trasformazione Wavelet. La DWT applica la funzione Wavelet su una griglia discreta di dati (come un'immagine digitale) ed è tipicamente utilizzata per decomporre l'immagine in diverse risoluzioni.
-Una **DWT** di un'immagine bidimensionale (come un'immagine MRI) divide l'immagine in coefficenti associati a differenti livelli di risoluzione e dettagli. La decomposizione in DWT produce tipicamente quattro componenti:
-- **LL (Low-Low)**: contiene le informazioni a bassa frequenza (strutture globali dell'immagine).
-- **LH (Low-High)**: contiene le informazioni orizzontali ad alta frequenza (dettagli orizzontali).
-- **HL (High-Low)**: contiene le informazioni verticali ad alta frequenza (dettagli verticali).
-- **HH (High-High)**: contiene le informazioni ad alta frequenza (dettagli fini).
-
-Uno degli utilizzi principali delle Wavelet nelle immagini è la compressione dei dati e il denoising. Nel contesto della ricostruzione delle immagini, le Wavelet vengono utilizzate per ottenere una rappresentazione sparsa dell'immagine. Le immagini vengono scomposte in componenti Wavelet, e successivamente si applica una tecnica di soft-thresholding per promuovere la sparsità. Questo è un approccio efficace per la ricostruzione compressa, dove si cerca di ottenere una buona approssimazione dell'immagine originale con pochi dati.
-
-
-
-
+In questa sezione, dopo aver completato la rappresentazione sparsa dell'immagine e il relativo campionamento nel dominio della trasformata, viene analizzata la ricostruzione dell'immagine originale. L'obiettivo è ottenere un'approssimazione accurata dell'immagine di partenza utilizzando diversi algoritmi di ottimizzazione: ISTA (Iterative Shrinkage-Thresholding Algorithm) e ADMM (Alternating Direction Method of Multipliers), applicandoli con tecniche di regolarizzazione basate su Total Variation e su Wavelet Transform. Questi algoritmi permettono di sfruttare le proprietà sparse dell'immagine nel dominio di FFT per ricostruirla efficacemente anche da dati sottocampionati.
 
 ## ISTA (Iterative Shrinkage-Thresholding algorithm)
 
@@ -77,7 +48,7 @@ dove $Φ_T$ consiste nell'applicazione della maschera e la successiva inversione
 
 ### Passi iterativi dell'algoritmo
 
-Nel codice che hai fornito, vediamo che l'algoritmo segue una struttura molto simile a quella di ISTA con una penalizzazione basata sulle Wavelet:
+L'algoritmo segue una struttura con una penalizzazione basata sulle Wavelet:
 
   1. **Passo di gradiente discendente**: viene calcolato il residuo $r = y - \Phi(x)$, dove $\Phi$ rappresenta la trasformazione legata alla FFT e alla maschera di undersampling. Successivamente, viene effettuato un passo di gradiente discendente:
 
@@ -160,8 +131,6 @@ def ISTA_MRI_reconstruction(y, mask, lam, max_iter=1000, tol=1e-5, step_size = 0
         # Update the estimate for the next iteration
         x = x_new
 
-    print(f"ISTA convergence reached at iteration {k+1}")
-    print(y * mask - fft2c(x) * mask)
     return x
 ```
 
@@ -175,9 +144,6 @@ L'Alternating Direction Method of Multipliers (ADMM) è una tecnica di ottimizza
 Consideriamo il problema della ricostruzione di un'immagine x da dati incompleti del k-spazio k. L'obiettivo è trovare un'immagine che:
 - rispetti i dati misurati nel k-spazio (ovvero le frequenze osservate)
 - riduca il rumore e gli artefatti che possono derivare dall'undersampling tramite la regolarizzazione.
-
-Questo può essere formulato come un problema di ottimizzazione che minimizza la seguente funzione obiettivo: 
-
 
 In forma primale, il problema si pone come
 
@@ -202,11 +168,6 @@ che si risolve in modalità iterativa tramite ADMM:
 - aggiornamento di $x$: minimizza il termine di fedeltà ai dati mantenendo fisso $z$ e $u$.
 - aggiornamento di $z$: minimizza il termine di variazione totale, effettuando una regolarizzazione TV.
 - aggiornamento della variabile duale $u$: aggiorna la variabile duale per spingere $x$ e $z$ a coincidere, soddisfacendo progressivamente il vincolo $x=z$.
-
-
-Anche lo stesso metodo di Total Variation si applica in modalità iterativa in modalità *gradient dessent*; iterativamente:
-- calcola i gradienti in entrambe le direzioni per misurare la variazione locale.
-- utilizza una norma dei gradienti per calcolare la divergenza e aggiornare l'immagine riducendo le variazioni eccessive, preservando i bordi.
 
 ```python
 import numpy as np
@@ -301,8 +262,6 @@ def admm_mri_tv_reconstruction(kspace_sub, mask, lam=0.1, num_iters=50):
 
 ## ADMM con Wavelet
 Mentre la regularizzazione TV è efficace nel preservare i contorni attraverso penalizzazioni sui gradienti e garantire una certa regolarità nell'immagine, la regularizzazione basata su Wavelet si dimostra particolarmente utile in applicazioni come la ricostruzione delle immagini MRI, dove le immagini tendono ad avere caratteristiche a più scale che possono essere rappresentate in modo sparso nel dominio delle Wavelet.
-
-Le Wavelet forniscono un modo potente di rappresentare i dati dell'immagine con coefficienti sparsi. Il principale vantaggio di utilizzare una regularizzazione Wavelet è che, rispetto alla regularizzazione TV, la Wavelet non solo preserva i bordi, ma è anche capace di adattarsi meglio a strutture che cambiano a diverse risoluzioni (come i dettagli finissimi nelle immagini MRI).
 
 L'algoritmo ADMM con regularizzazione Wavelet differisce da quello con regularizzazione TV  nella fase di regolarizzazione. Invece di applicare una penalizzazione sui gradienti dell'immagine (come nel caso del TV), applica una sogliatura ai coefficienti di Wavelet dell'immagine.
 
