@@ -47,8 +47,13 @@ img_no_reconstruction_gaussian = ifft2c(y_mask_gaussian)                        
 mse_ifft_gaussian = np.mean((img_original - np.abs(img_no_reconstruction_gaussian)) ** 2)       # MSE without reconstruction
 psnr_ifft_gaussian = psnr(img_original, np.abs(img_no_reconstruction_gaussian))
 
+print(f"\n\nSamplaed image\nMSE: {mse_ifft_gaussian:.8f}\nPSNR: {psnr_ifft_gaussian:.8f}")
 plt.figure()
-plt.suptitle(f"Reconstruction algorithms\nInitial MSE: {mse_ifft_gaussian:.6f}\n Initiali PSNR: {psnr_ifft_gaussian:.6f}", fontsize=25)
+plt.suptitle("Reconstruction algorithms", fontsize=30)
+plt.subplot(1,4,1)
+plt.imshow(np.abs(img_no_reconstruction_gaussian))
+plt.title(f"Samplaed image\nMSE: {mse_ifft_gaussian:.8f}\nPSNR: {psnr_ifft_gaussian:.8f}")
+plt.axis('off')
 
 
 
@@ -71,7 +76,7 @@ psnr_insta = psnr(img_original, np.abs(img_reconstructed_ista))
 recon_type = "ISTA with Wavelet"
 variable_setting = f"Lambda: {lam}; Iterations: {iterations}; Step-size: {step_size}"
 print(f"\n\n{recon_type}\n{variable_setting}\nMSE: {mse_ista:.8f}\nPSNR: {psnr_insta:.8f}")
-plt.subplot(1,3,1)
+plt.subplot(1,4,2)
 plt.imshow(np.abs(img_reconstructed_ista))
 plt.title(f"{recon_type}\nMSE: {mse_ista:.8f}\nPSNR: {psnr_insta:.8f}")
 plt.axis('off')
@@ -97,7 +102,7 @@ psnr_admm = psnr(img_original, np.abs(img_reconstructed_admm))
 recon_type = "ADMM with Wavelet"
 variable_setting = f"Wavelet: {wavelet} - level {level}; Threshold: {threshold}; Max iterations: {max_iter};"
 print(f"\n\n{recon_type}\n{variable_setting}\nMSE: {mse_admm}\nPSNR: {psnr_admm}")
-plt.subplot(1,3,2)
+plt.subplot(1,4,3)
 plt.imshow(np.abs(img_reconstructed_admm))
 plt.title(f"{recon_type}\nMSE: {mse_admm:.8f}\nPSNR: {psnr_admm:.8f}")
 plt.axis('off')
@@ -122,7 +127,7 @@ psnr_admm = psnr(img_original, np.abs(img_reconstructed_admm))
 recon_type = "ADMM with TV"
 variable_setting = f"Lambda: {lam}; Max iterations: {max_iter};"
 print(f"\n\n{recon_type}\n{variable_setting}\nMSE: {mse_admm}\nPSNR: {psnr_admm}")
-plt.subplot(1,3,3)
+plt.subplot(1,4,4)
 plt.imshow(np.abs(img_reconstructed_admm))
 plt.title(f"{recon_type}\nMSE: {mse_admm:.8f}\nPSNR: {psnr_admm:.8f}")
 plt.axis('off')
