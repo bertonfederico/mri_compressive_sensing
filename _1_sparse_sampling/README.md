@@ -1,39 +1,39 @@
-# Compressione delle Immagini MRI
+# Compression of MRI Images.
 
-Nel campo dell’imaging medico, in particolare con la Risonanza Magnetica (MRI), la necessità di compressione delle immagini nasce dalla grande quantità di dati che esse generano. Le immagini MRI richiedono infatti molto spazio di archiviazione, il che può risultare costoso e complicato da gestire, specialmente quando si tratta di scansioni ad alta risoluzione o di più sezioni (slice). Le tecniche di compressione diventano quindi fondamentali per ridurre i costi di archiviazione e trasmissione dei dati, mantenendo al contempo una qualità sufficiente per le finalità diagnostiche.
+In the field of medical imaging, particularly with Magnetic Resonance Imaging (MRI), the need for image compression arises from the large amount of data they generate. Indeed, MRI images require a lot of storage space, which can be costly and complicated to manage, especially when dealing with high-resolution scans or multiple sections (slices). Compression techniques therefore become critical to reduce the cost of data storage and transmission, while maintaining sufficient quality for diagnostic purposes.
 
-Le immagini MRI sono spesso acquisite in scala di grigi e presentano una certa simmetria intrinseca. Questa simmetria può essere sfruttata per la compressione. In particolare, un'immagine MRI, che rappresenta il dominio spaziale, può esibire proprietà simmetriche che consentono di ridurre i dati. Ad esempio, quando un'immagine MRI è in scala di grigi, la metà sinistra dell'immagine è spesso una riflessione della metà destra. Questa simmetria suggerisce che, in alcuni casi, i dati potrebbero essere ridotti concentrandosi solo su un lato dell'immagine. Tuttavia, la simmetria nelle immagini MRI non è sempre perfetta, quindi vengono esplorate altre modalità di compressione per ottenere una riduzione ottimale delle dimensioni dei dati.
+MRI images are often acquired in grayscale and have some inherent symmetry. This symmetry can be exploited for compression. In particular, an MRI image, representing the spatial domain, can exhibit symmetric properties that allow for data reduction. For example, when an MRI image is grayscale, the left half of the image is often a reflection of the right half. This symmetry suggests that, in some cases, data could be reduced by focusing only on one side of the image. However, symmetry in MRI images is not always perfect, so other compression modes are explored to achieve optimal data size reduction.
 
-## Tecniche di compressione sul k-space dell'MRI
+## Compression techniques on the MRI k-space.
 
-Il k-space è il dato grezzo acquisito durante la scansione MRI, che contiene tutti i componenti di frequenza necessari per ricostruire l'immagine. L'idea alla base della compressione nel k-space è che non tutte le frequenze contribuiscono in modo uguale all'immagine finale. Alcune frequenze, in particolare quelle al centro del k-space, rappresentano i componenti a bassa frequenza, che generalmente contengono le informazioni più significative sull'immagine. Le componenti ad alta frequenza, situate ai margini del k-space, rappresentano spesso dettagli più fini, che possono essere eliminati più facilmente senza compromettere significativamente la qualità dell'immagine.
+The k-space is the raw data acquired during the MRI scan, which contains all the frequency components needed to reconstruct the image. The idea behind compression in the k-space is that not all frequencies contribute equally to the final image. Some frequencies, particularly those in the center of the k-space, represent the low-frequency components, which generally contain the most significant image information. High-frequency components, located at the edges of the k-space, often represent finer details, which can be more easily removed without significantly compromising image quality.
 
-Per esplorare questa idea, possiamo applicare diverse tecniche di campionamento nel k-space dopo aver eseguito una trasformata FFT 2D dell'immagine MRI. Tre diverse modalità di campionamento vengono considerate per la compressione:
+To explore this idea, we can apply different sampling techniques in the k-space after performing a 2D FFT transform of the MRI image. Three different sampling modes are considered for compression:
 
-1. **Campionamento gaussiano**: in questa modalità, i valori di k-space vengono campionati seguendo una distribuzione gaussiana, concentrando il campionamento maggiormente verso il centro del k-space.
+1. **Gaussian sampling**: In this mode, k-space values are sampled following a Gaussian distribution, concentrating the sampling more toward the center of the k-space.
    
-2. **Campionamento casuale**: in questa modalità, i valori di k-space vengono scelti in modo casuale, senza alcuna priorità, per creare una selezione di campioni che non segue un pattern specifico.
+2. **Random sampling**: In this mode, k-space values are chosen randomly, without any priority, to create a sample selection that does not follow a specific pattern.
 
-3. **Campionamento a soglia**: qui, vengono selezionati solo i coefficienti nel k-space che superano una certa soglia di ampiezza, escludendo i valori più bassi, che generalmente contengono informazioni meno significative per l'immagine.
+3. **Threshold sampling**: here, only the coefficients in the k-space that exceed a certain amplitude threshold are selected, excluding the lowest values, which generally contain less meaningful information for the image.
 
-Per confrontare queste modalità, viene presa la stessa percentuale (10%) dei valori più alti e gli altri vengono posti a zero. Questo approccio permette di osservare l'effetto di ciascun tipo di campionamento sulla qualità dell'immagine finale e sulla compressione dei dati. I risultati mostrano che la modalità ottimale è quella che seleziona i coefficienti più alti, poiché essa conserva le informazioni più rilevanti per la ricostruzione dell’immagine. Tuttavia, la modalità gaussiana non si discosta molto da essa, dato che la FFT2D nel k-space tende a concentrarsi principalmente attorno al centro, il che rende simile il campionamento gaussiano al campionamento dei valori più alti.
+To compare these modes, the same percentage (10%) of the highest values is taken and the others are set to zero. This approach allows observing the effect of each sampling type on the final image quality and data compression. The results show that the optimal mode is the one that selects the highest coefficients, since it retains the most relevant information for image reconstruction. However, the Gaussian mode does not differ much from it, since the FFT2D in the k-space tends to concentrate mainly around the center, which makes Gaussian sampling similar to sampling the highest values.
 
 ![Figure_2](https://github.com/user-attachments/assets/b2363f85-79c4-40f7-99d4-8238c297bbf0)
 
 
-## Modalità di condivisione dei dati dopo il campionamento della FFT2D
+## Ways of sharing data after FFT2D sampling.
 
-Una volta eseguito il campionamento del k-space, è importante considerare come i dati possano essere condivisi efficacemente. La FFT2D del k-space di un’immagine MRI rappresenta di fatto la forma grezza dei dati immediatamente ottenuta dalla risonanza. Pertanto, è possibile condividere direttamente il k-space dell'MRI, ma dopo il campionamento, diventa necessario conoscere le modalità con cui i dati sono stati campionati per poterli ricostruire correttamente.
+Once k-space sampling has been performed, it is important to consider how the data can be shared effectively. The FFT2D of the k-space of an MRI image actually represents the raw form of the data immediately obtained from the MRI. Therefore, it is possible to share the k-space of the MRI directly, but after sampling, it becomes necessary to know the modes by which the data were sampled in order to reconstruct them correctly.
 
-- **Modalità gaussiana e casuale**: per queste due modalità, si potrebbe utilizzare una maschera di campionamento fissa. In altre parole, la stessa maschera di campionamento potrebbe essere utilizzata ogni volta, il che eliminerebbe la necessità di trasmettere informazioni aggiuntive su come i dati siano stati campionati. Questa soluzione semplificherebbe la gestione dei dati dopo il campionamento.
+- **Gaussian and random modes**: for these two modes, a fixed sampling mask could be used. In other words, the same sampling mask could be used each time, which would eliminate the need to transmit additional information about how the data were sampled. This solution would simplify data management after sampling.
 
-- **Modalità di selezione dei valori più significativi**: nel caso del campionamento basato sulla selezione dei valori più alti, è necessario in qualche modo condividere informazioni aggiuntive riguardo alla posizione dei valori campionati nel k-space. Poiché i valori vengono selezionati in modo non uniforme, è necessario sapere esattamente quali coefficienti sono stati scelti per poter ricostruire correttamente l'immagine.
+- **Mode of selecting the most significant values**: In the case of sampling based on selecting the highest values, it is necessary to somehow share additional information regarding the location of the sampled values in the k-space. Since the values are selected non-uniformly, it is necessary to know exactly which coefficients were chosen in order to reconstruct the image correctly.
 
-Per affrontare questa necessità, sono state testate due modalità per rappresentare i dati campionati:
+To address this need, two ways to represent the sampled data were tested:
 
-1. **COO (Coordinate Format)**: questa modalità rappresenta i dati come una matrice sparsa, memorizzando solo i valori non nulli e le loro posizioni. L'indice delle righe e delle colonne viene memorizzato separatamente, riducendo notevolmente la quantità di dati da trasmettere rispetto a una matrice completa.
+1. **COO (Coordinate Format)**: this mode represents the data as a sparse matrix, storing only nonzero values and their positions. The index of rows and columns are stored separately, greatly reducing the amount of data to be transmitted compared to a full matrix.
 
-2. **RLE (Run-Length Encoding)**: l'RLE è una tecnica di compressione che rappresenta sequenze consecutive di valori uguali (run) come una coppia di valore e frequenza (cioè il valore stesso e il numero di volte che si ripete). Nel contesto del k-space, questa modalità può essere utile per comprimere aree in cui molti coefficienti sono zero o hanno valori simili, riducendo il numero di dati da trasmettere.
+2. **RLE (Run-Length Encoding)**: RLE is a compression technique that represents consecutive sequences of equal values (runs) as a pair of value and frequency (i.e., the value itself and the number of times it repeats). In the context of k-space, this mode can be useful for compressing areas where many coefficients are zero or have similar values, reducing the amount of data to be transmitted.
 
 <table align="center">
   <tr>
@@ -62,4 +62,4 @@ Per affrontare questa necessità, sono state testate due modalità per rappresen
   </tr>
 </table>
 
-Ne risulta che, applicando un campionamento del 10% dei valori massimi nel k-space, si può trasmettere solo una frazione molto ridotta dei dati originali, ovvero circa il 15% nel caso della codifica COO e circa il 25% nel caso della codifica RLE.
+The result is that by applying a sampling of 10 percent of the maximum values in the k-space, only a very small fraction of the original data can be transmitted, i.e., about 15 percent in the case of COO encoding and about 25 percent in the case of RLE encoding.

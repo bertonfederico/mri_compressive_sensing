@@ -1,73 +1,73 @@
-# Reconstruction of the original image.
+# Ricostruzione dell'immagine originale
 
-In this section, after completing the sparse representation of the image and its sampling in the transform domain, the reconstruction of the original image is analyzed. The goal is to obtain an accurate approximation of the source image using several optimization algorithms: ISTA (Iterative Shrinkage-Thresholding Algorithm) and ADMM (Alternating Direction Method of Multipliers), applying them with regularization techniques based on Total Variation and Wavelet Transform. These algorithms make it possible to exploit the sparse properties of the image in the FFT domain to effectively reconstruct it even from undersampled data.
+In questa sezione, dopo aver completato la rappresentazione sparsa dell'immagine e il relativo campionamento nel dominio della trasformata, viene analizzata la ricostruzione dell'immagine originale. L'obiettivo è ottenere un'approssimazione accurata dell'immagine di partenza utilizzando diversi algoritmi di ottimizzazione: ISTA (Iterative Shrinkage-Thresholding Algorithm) e ADMM (Alternating Direction Method of Multipliers), applicandoli con tecniche di regolarizzazione basate su Total Variation e su Wavelet Transform. Questi algoritmi permettono di sfruttare le proprietà sparse dell'immagine nel dominio di FFT per ricostruirla efficacemente anche da dati sottocampionati.
 
 ![Figure_1](https://github.com/user-attachments/assets/f8d1b865-d7f0-4018-8436-036ab6e9f559)
 
-## ISTA (Iterative Shrinkage-Thresholding algorithm).
+## ISTA (Iterative Shrinkage-Thresholding algorithm)
 
-The **ISTA** algorithm is an iterative technique used to solve optimization problems in which an attempt is made to minimize an objective function consisting of two main terms:
+L'algoritmo **ISTA** è una tecnica iterativa utilizzata per risolvere problemi di ottimizzazione in cui si cerca di minimizzare una funzione obiettivo composta da due termini principali:
 
-1. **Fitting error (data fidelity term)**: represents the discrepancy between the estimate and the observed data.
-2. **Regularization (sparsity penalty)**: penalizes nonsparsity solutions, that is, solutions in which many variables are nonzero.
+1. **Errore di adattamento (termine di data fidelity)**: rappresenta la discrepanza tra la stima e i dati osservati.
+2. **Regolarizzazione (penalizzazione della sparsità)**: penalizza soluzioni non sparse, cioè soluzioni in cui molte variabili non sono zero.
 
-ISTA is commonly used to solve the following optimization problem:
+L'ISTA è comunemente utilizzato per risolvere il seguente problema di ottimizzazione:
 
 $$
 \min_x \frac{1}{2} \| A x - y \|^2_2 + \lambda \| x \|_1
 $$
 
-where:
-- $A$ is the transformation matrix
-- $y$ is the vector of observed data
-- $x$ is the variable to be reconstructed
-- $\lambda$ is the regularization parameter that balances the trade-off between the fit to the data and the sparsity of the solution.
+Dove:
+- $A$ è la matrice di trasformazione
+- $y$ è il vettore di dati osservati
+- $x$ è la variabile da ricostruire
+- $\lambda$ è il parametro di regularizzazione che bilancia il trade-off tra l'adattamento ai dati e la sparsità della soluzione.
 
-### Extension of ISTA with wavelet penalty and function $\Phi(x)$
+### Estensione di ISTA con penalizzazione Wavelet e funzione $\Phi(x)$
 
-Traditional ISTA uses the $\| x \|_1$ penalty, i.e., the $l_1$ norm of the image coefficients. However, as mentioned above the domain with better sparsity is Wavelet.
-The use of wavelets makes it possible to represent the image in terms of a set of coefficients that can be sparse. A wavelet transform decomposes an image into a series of coefficients at different resolutions, which describe the structure of the image at different scales.
+L'ISTA tradizionale usa la penalizzazione $\| x \|_1$, ovvero la norma $l_1$ dei coefficienti dell'immagine. Tuttavia, come già citato il dominio che presenta miglior sparsità è Wavelet.
+L'uso delle Wavelet consente di rappresentare l'immagine in termini di una serie di coefficienti che possono essere sparsi. Una trasformata Wavelet scompone un'immagine in una serie di coefficienti a diverse risoluzioni, che descrivono la struttura dell'immagine a diverse scale.
 
-The ISTA objective function can then be modified to apply the $l_1$ penalty on the wavelet coefficients, rather than on the image values. This leads to the following problem:
+La funzione obiettivo dell'ISTA può quindi essere modificata per applicare la penalizzazione $l_1$ sui coefficienti Wavelet, piuttosto che sui valori dell'immagine. Questo porta al seguente problema:
 
 $$\min_x \frac{1}{2} \| A x - y \|^2_2 + \lambda \| W(x) \|_1$$
 
-where $W(x)$ is the wavelet function applied to the image $x$, and thus the $l_1$ norm is now applied on the wavelet coefficients.
+dove $W(x)$ è la funzione Wavelet applicata all'immagine $x$, e quindi la norma $l_1$ è ora applicata sui coefficienti Wavelet.
 
-In the traditional version of ISTA, the observation model is described by a linear system, where the observed data y are obtained by applying a matrix A to a vector $x$, i.e., $y=Ax+r$, where $r$ is the noise. In this context, the matrix $A$ represents an operator that maps the vector $x$ to the domain of observations $y$.
+Nella versione tradizionale di ISTA, il modello di osservazione è descritto da un sistema lineare, in cui i dati osservati y sono ottenuti applicando una matrice A a un vettore $x$, ovvero $y=Ax+r$, dove $r$ è il rumore. In questo contesto, la matrice $A$ rappresenta un operatore che mappa il vettore $x$ nel dominio delle osservazioni $y$.
 
-The loss function in this case is
+La funzione di perdita in questo caso è
 
 $$​L(x)=\frac{1}{2} \|Φ(x)−y\|_2^2$$
 
-where $Φ(x)$ represents the process that maps the image $x$ from the spatial domain to the frequency domain via FFT2D, subsequently applying a mask.
+dove $Φ(x)$ rappresenta il processo che mappa l'immagine $x$ dal dominio spaziale al dominio delle frequenze tramite la FFT2D, applicando successivamente una maschera.
 
-Having to consider in the ISTA algorithm the grdient of the error $r$ to be minimized, we have that
+Dovendo considerare nell'algoritmo ISTA il grdiente dell'errore $r$ da minimizzare, si ha che
 
 $$∇_x​L(x)=Φ_T(Φ(x)−y)$$
 
-where $Φ_T$ consists of the application of the mask and the subsequent inversion of FFT2D.
+dove $Φ_T$ consiste nell'applicazione della maschera e la successiva inversione della FFT2D.
 
-### Iterative steps of the algorithm.
+### Passi iterativi dell'algoritmo
 
-The algorithm follows a structure with a wavelet-based penalty:
+L'algoritmo segue una struttura con una penalizzazione basata sulle Wavelet:
 
-  1. **Descending gradient step**: the residual $r = y - \Phi(x)$ is calculated, where $\Phi$ represents the transformation related to the FFT and the undersampling mask. Next, a descending gradient step is performed:
+  1. **Passo di gradiente discendente**: viene calcolato il residuo $r = y - \Phi(x)$, dove $\Phi$ rappresenta la trasformazione legata alla FFT e alla maschera di undersampling. Successivamente, viene effettuato un passo di gradiente discendente:
 
   $$x^{k+1} = x^k - \alpha \nabla f(x^k) = x^k + \alpha \  \Phi_T(r)$$
 
-  2. **Soft-thresholding step on Wavelet coefficients**: after the gradient step, the code performs a Wavelet decomposition on the updated $x^{k+1}$ image; this transformation decomposes the image into a series of coefficients at different levels of resolution. Next, soft-thresholding is applied to each coefficient: at this point, small coefficients are reduced to zero, leading to a more sparse solution.
+  2. **Passo di soft-thresholding sui coefficienti Wavelet**: dopo il passo di gradiente, il codice esegue una decomposizione Wavelet sull'immagine aggiornata $x^{k+1}$; questa trasformazione scompone l'immagine in una serie di coefficienti a diversi livelli di risoluzione. Successivamente, il soft-thresholding è applicato a ciascun coefficiente: a questo punto, i coefficienti di piccole dimensioni sono ridotti a zero, portando a una soluzione più sparsa.
  
   $$z^{k+1} = wavelet(x^{k+1})$$
   $$S_\lambda(z^{k+1}) = \text{sign}(z^{k+1}) \cdot \max(|z^{k+1}| - \lambda, 0)$$
 
-  3. **Image reconstruction step**: Once the wavelet coefficients are subject to soft-thresholding, the image is reconstructed through the inverse of the wavelet transform:
+  3. **Passo di ricostruzione dell'immagine**: una volta che i coefficienti Wavelet sono soggetti a soft-thresholding, l'immagine viene ricostruita attraverso l'inversa della trasformazione Wavelet:
      
   $$x^{k+1} = wavelet_T(S_\lambda(z^{k+1}))$$
   
-  3. **Convergence check**: finally, the code checks convergence by comparing the difference between the current solution and the previous solution. If the difference is less than a tolerance $\text{tol}$, or if the number of iterations reaches a threshold, the algorithm stops. 
+  3. **Verifica della convergenza**: infine, il codice verifica la convergenza confrontando la differenza tra la soluzione corrente e quella precedente. Se la differenza è inferiore a una tolleranza $\text{tol}$, o se il numero di iterazioni raggiunge una soglia, l'algoritmo si ferma. 
 
-### Algorithm code
+### Codice dell'algoritmo
 
 ```python
 # Soft-thresholding function for sparsity regularization
@@ -140,35 +140,35 @@ def ISTA_MRI_reconstruction(y, mask, lam, max_iter=1000, tol=1e-5, step_size = 0
 
 
 
-## ADMM with TOTAL VARIATION.
-The Alternating Direction Method of Multipliers (ADMM) is an optimization technique particularly suitable for problems that combine multiple cost terms, each of which requires a different form of regularization. This approach applies well to the reconstruction of undersampled MRI images, where we want to simultaneously preserve the measured data and obtain a “clean” image free of artifacts. Total Variation (TV) penalization is a commonly used method for this purpose, as it minimizes local variations without excessively blurring the edges, preserving important structural details of the image.
-Consider the problem of reconstructing an image x from incomplete k-space data k. The goal is to find an image that:
-- respects the measured k-space data (i.e., the observed frequencies)
-- reduces noise and artifacts that may result from undersampling through regularization.
+## ADMM con TOTAL VARIATION
+L'Alternating Direction Method of Multipliers (ADMM) è una tecnica di ottimizzazione particolarmente adatta per problemi che combinano più termini di costo, ciascuno dei quali richiede una diversa forma di regolarizzazione. Questo approccio si applica bene alla ricostruzione di immagini MRI sottocampionate, dove vogliamo contemporaneamente preservare i dati misurati e ottenere un'immagine "pulita" e priva di artefatti. La penalizzazione di Variazione Totale (TV) è un metodo comunemente usato per questo scopo, in quanto minimizza le variazioni locali senza sfocare eccessivamente i bordi, preservando i dettagli strutturali importanti dell'immagine.
+Consideriamo il problema della ricostruzione di un'immagine x da dati incompleti del k-spazio k. L'obiettivo è trovare un'immagine che:
+- rispetti i dati misurati nel k-spazio (ovvero le frequenze osservate)
+- riduca il rumore e gli artefatti che possono derivare dall'undersampling tramite la regolarizzazione.
 
-In primary form, the problem is posed as.
+In forma primale, il problema si pone come
 
 $$\min_x \frac{1}{2} \| mask \ (FFT2D(x) - k) \|^2_2 + \lambda*TV(x)$$
 
-where:
-- $mask$ is the sampling mask, a matrix that retains observed k-space values and ignores unmeasured ones.
-- $FFT2D(x)$ is the Fourier transform of the $x$ image, which allows it to be compared with the $k$ data in the k-space domain.
-- $TV(x)$ represents the total variation of $x$. Since it cannot be computed in closed form, the minimization of TV is also done iteratively:
+dove:
+- $mask$ è la maschera di campionamento, una matrice che conserva i valori di k-spazio osservati e ignora quelli non misurati.
+- $FFT2D(x)$ è la trasformata di Fourier dell'immagine $x$, che permette di confrontarla con i dati $k$ nel dominio k-spazio.
+- $TV(x)$ rappresenta la variazione totale di $x$. Non essendo calcolabile in forma chiusa, anche la minimizzazione della TV viene effettuato iterativamente:
 
-  - calculation of the gradient in the horizontal and vertical directions;
-  - calculation of the total norm of the gradient and normalization by it of the previously calculated gradients;
-  - calculation of both horizontal and vertical divergence, and combination of them to calculate the total divergence for each pixel;
-  - updating the image from that divergence, using a desired weight variable;
+  - calcolo del gradiente nelle direzioni orizzontali e verticali;
+  - calcolo della norma totale del gradiente e normalizzazione tramite esso dei gradienti precedentemente calcolati;
+  - calcolo della divergenza sia orizzontale che verticale, e combinazione di esse per il calcolo della divergenza totale per ogni pixel;
+  - aggiornamento dell'immagine a partire da tale divergenza, utilizzando una variabile peso desiderata;
 
 
-In primal-dual form, the problem becomes:
+In forma primale-duale, il problema diventa:
 
 $$\min_{x, z} \frac{1}{2} \| mask \ (FFT2D(x) - k) \|^2_2 + \lambda*TV(x)\ \ \ \ \ \ \ s.t\ \ \ x = z$$
 
-which is solved in iterative mode via ADMM:
-- update of $x$: minimizes the data fidelity term by keeping $z$ and $u$ fixed.
-- update of $z$: minimizes the total variance term by performing a TV regularization.
-- updating the dual variable $u$: updates the dual variable to push $x$ and $z$ to coincide, progressively satisfying the $x=z$ constraint.
+che si risolve in modalità iterativa tramite ADMM:
+- aggiornamento di $x$: minimizza il termine di fedeltà ai dati mantenendo fisso $z$ e $u$.
+- aggiornamento di $z$: minimizza il termine di variazione totale, effettuando una regolarizzazione TV.
+- aggiornamento della variabile duale $u$: aggiorna la variabile duale per spingere $x$ e $z$ a coincidere, soddisfacendo progressivamente il vincolo $x=z$.
 
 ```python
 import numpy as np
@@ -261,25 +261,25 @@ def admm_mri_tv_reconstruction(kspace_sub, mask, lam=0.1, num_iters=50):
 
 
 
-## ADMM with Wavelet
-While TV regularization is effective in preserving contours through gradient penalties and ensuring some regularity in the image, Wavelet-based regularization proves particularly useful in applications such as MRI image reconstruction, where images tend to have features at multiple scales that can be represented in a sparse manner in the Wavelet domain.
+## ADMM con Wavelet
+Mentre la regularizzazione TV è efficace nel preservare i contorni attraverso penalizzazioni sui gradienti e garantire una certa regolarità nell'immagine, la regularizzazione basata su Wavelet si dimostra particolarmente utile in applicazioni come la ricostruzione delle immagini MRI, dove le immagini tendono ad avere caratteristiche a più scale che possono essere rappresentate in modo sparso nel dominio delle Wavelet.
 
-The ADMM algorithm with wavelet regularization differs from that with TV regularization in the regularization step. Instead of applying a penalty on the gradients of the image (as in the case of TV), it applies a thresholding to the wavelet coefficients of the image.
+L'algoritmo ADMM con regularizzazione Wavelet differisce da quello con regularizzazione TV  nella fase di regolarizzazione. Invece di applicare una penalizzazione sui gradienti dell'immagine (come nel caso del TV), applica una sogliatura ai coefficienti di Wavelet dell'immagine.
 
-In primary form, the problem is posed as.
+In forma primale, il problema si pone come
 
 $$\min_x \frac{1}{2} \| mask*(FFT2D(x) - y) \|^2_2 + \lambda \| W(x) \|_1\ \ \$$
 
-while in primal-dual form
+mentre in forma primale-duale
 
 $$\min_{x, z} \frac{1}{2} \| mask*(FFT2D(x) - y) \|^2_2 + \lambda \| z \|_1\ \ \ \ \ \ \ s.t\ \ \ W(x) = z$$
 
-which is solved in iterative mode via ADMM:
-- fidelity step, as exhibited in the TV case.
-- regularization step: in this case, Wavelet-based denoising is applied. This step exploits the wavelet decomposition of the image, applies thresholding to the detail coefficients, and reconstructs the image using the thresholded coefficients.
-- update of the dual variable: as in the case of TV, the dual variable is updated to correct.
+che si risolve in modalità iterativa tramite ADMM:
+- passo di fedeltà, come esposto nel caso TV.
+- passo di regolarizzazione: in questo caso si applica il denoising basato su Wavelet. Questo passaggio sfrutta la decomposizione Wavelet dell'immagine, applica la sogliatura ai coefficienti di dettaglio e ricostruisce l'immagine utilizzando i coefficienti sogliati.
+- aggiornamento della variabile duale: come nel caso del TV, la variabile duale viene aggiornata per correggere.
 
-The main difference between TV and wavelet regularization lies in the nature of the penalty. While TV penalizes variation in pixel values (favoring uniform shading), wavelet penalizes high-frequency detail coefficients, favoring a sparse representation of structures at multiple scales.
+La principale differenza tra la regularizzazione TV e quella Wavelet sta nella natura della penalizzazione. Mentre la TV penalizza la variazione dei valori di pixel (favorendo l'ombreggiatura uniforme), la Wavelet penalizza i coefficienti di dettaglio ad alta frequenza, favorendo una rappresentazione sparsa delle strutture a più scale.
 
 ```python
 import numpy as np
