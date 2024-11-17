@@ -1,10 +1,10 @@
-# Compression of MRI Images.
+# Compression of MRI Images
 
 In the field of medical imaging, particularly with Magnetic Resonance Imaging (MRI), the need for image compression arises from the large amount of data they generate. Indeed, MRI images require a lot of storage space, which can be costly and complicated to manage, especially when dealing with high-resolution scans or multiple sections (slices). Compression techniques therefore become critical to reduce the cost of data storage and transmission, while maintaining sufficient quality for diagnostic purposes.
 
 MRI images are often acquired in grayscale and have some inherent symmetry. This symmetry can be exploited for compression. In particular, an MRI image, representing the spatial domain, can exhibit symmetric properties that allow for data reduction. For example, when an MRI image is grayscale, the left half of the image is often a reflection of the right half. This symmetry suggests that, in some cases, data could be reduced by focusing only on one side of the image. However, symmetry in MRI images is not always perfect, so other compression modes are explored to achieve optimal data size reduction.
 
-## Compression techniques on the MRI k-space.
+## Compression techniques on the MRI k-space
 
 The k-space is the raw data acquired during the MRI scan, which contains all the frequency components needed to reconstruct the image. The idea behind compression in the k-space is that not all frequencies contribute equally to the final image. Some frequencies, particularly those in the center of the k-space, represent the low-frequency components, which generally contain the most significant image information. High-frequency components, located at the edges of the k-space, often represent finer details, which can be more easily removed without significantly compromising image quality.
 
@@ -21,7 +21,7 @@ To compare these modes, the same percentage (10%) of the highest values is taken
 ![Figure_2](https://github.com/user-attachments/assets/b2363f85-79c4-40f7-99d4-8238c297bbf0)
 
 
-## Ways of sharing data after FFT2D sampling.
+## Ways of sharing data after FFT2D sampling
 
 Once k-space sampling has been performed, it is important to consider how the data can be shared effectively. The FFT2D of the k-space of an MRI image actually represents the raw form of the data immediately obtained from the MRI. Therefore, it is possible to share the k-space of the MRI directly, but after sampling, it becomes necessary to know the modes by which the data were sampled in order to reconstruct them correctly.
 

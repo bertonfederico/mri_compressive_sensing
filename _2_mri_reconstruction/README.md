@@ -1,10 +1,10 @@
-# Reconstruction of the original image.
+# Reconstruction of the original image
 
 In this section, after completing the sparse representation of the image and its sampling in the transform domain, the reconstruction of the original image is analyzed. The goal is to obtain an accurate approximation of the source image using several optimization algorithms: ISTA (Iterative Shrinkage-Thresholding Algorithm) and ADMM (Alternating Direction Method of Multipliers), applying them with regularization techniques based on Total Variation and Wavelet Transform. These algorithms make it possible to exploit the sparse properties of the image in the FFT domain to effectively reconstruct it even from undersampled data.
 
 ![Figure_1](https://github.com/user-attachments/assets/f8d1b865-d7f0-4018-8436-036ab6e9f559)
 
-## ISTA (Iterative Shrinkage-Thresholding algorithm).
+## ISTA (Iterative Shrinkage-Thresholding algorithm)
 
 The **ISTA** algorithm is an iterative technique used to solve optimization problems in which an attempt is made to minimize an objective function consisting of two main terms:
 
@@ -48,7 +48,7 @@ $$∇_x​L(x)=Φ_T(Φ(x)−y)$$
 
 where $Φ_T$ consists of the application of the mask and the subsequent inversion of FFT2D.
 
-### Iterative steps of the algorithm.
+### Iterative steps of the algorithm
 
 The algorithm follows a structure with a wavelet-based penalty:
 
@@ -140,7 +140,7 @@ def ISTA_MRI_reconstruction(y, mask, lam, max_iter=1000, tol=1e-5, step_size = 0
 
 
 
-## ADMM with TOTAL VARIATION.
+## ADMM with TOTAL VARIATION
 The Alternating Direction Method of Multipliers (ADMM) is an optimization technique particularly suitable for problems that combine multiple cost terms, each of which requires a different form of regularization. This approach applies well to the reconstruction of undersampled MRI images, where we want to simultaneously preserve the measured data and obtain a “clean” image free of artifacts. Total Variation (TV) penalization is a commonly used method for this purpose, as it minimizes local variations without excessively blurring the edges, preserving important structural details of the image.
 Consider the problem of reconstructing an image x from incomplete k-space data k. The goal is to find an image that:
 - respects the measured k-space data (i.e., the observed frequencies)

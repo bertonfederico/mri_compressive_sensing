@@ -1,4 +1,4 @@
-# MRI signal sparsity.
+# MRI signal sparsity
 
 Sparse **representation** is a fundamental concept in signal processing, particularly useful for compressing and representing signals that contain a large amount of information into a small number of meaningful components. In general, a signal $x$ can be represented in a basis (or dictionary) $\Psi$ as a linear combination of a few elements:
 
@@ -13,7 +13,7 @@ where:
 
 In the case of natural signals, such as MRI, their sparse representation is often well approximated in bases such as **Wavelet**, **Fourier** or **DCT**.
 
-# 2D Fourier transform**.
+# 2D Fourier transform**
 
 In the case of images, the general theory of sparsity can be applied using the **Discrete Fourier Transform (DFT)**, which is an orthonormal basis for representing an image in the frequency domain.
 
