@@ -2,8 +2,7 @@
 
 In questa sezione, dopo aver completato la rappresentazione sparsa dell'immagine e il relativo campionamento nel dominio della trasformata, viene analizzata la ricostruzione dell'immagine originale. L'obiettivo è ottenere un'approssimazione accurata dell'immagine di partenza utilizzando diversi algoritmi di ottimizzazione: ISTA (Iterative Shrinkage-Thresholding Algorithm) e ADMM (Alternating Direction Method of Multipliers), applicandoli con tecniche di regolarizzazione basate su Total Variation e su Wavelet Transform. Questi algoritmi permettono di sfruttare le proprietà sparse dell'immagine nel dominio di FFT per ricostruirla efficacemente anche da dati sottocampionati.
 
-
-
+![Figure_1](https://github.com/user-attachments/assets/f8d1b865-d7f0-4018-8436-036ab6e9f559)
 
 ## ISTA (Iterative Shrinkage-Thresholding algorithm)
 
@@ -110,8 +109,7 @@ def ISTA_MRI_reconstruction(y, mask, lam, max_iter=1000, tol=1e-5, step_size = 0
     """
     
     # Initialize the reconstructed image with the zero-filled back-projection of y
-    x_or = Phi_T(y, mask)
-    x = np.copy(x_or)
+    x = Phi_T(y, mask)
     
 
     for k in range(max_iter):
