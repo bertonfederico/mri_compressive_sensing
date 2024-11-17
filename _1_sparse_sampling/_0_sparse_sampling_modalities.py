@@ -15,14 +15,14 @@ from skimage.metrics import peak_signal_noise_ratio as psnr
 ######################### Image loading ##########################
 ##################################################################
 # Load and preprocess the input image
-file_path = '../mri_images/image.jpg'  # Path to the input image
+file_path = 'image.jpg'  # Path to the input image
 image = imread(file_path)
 
 # Convert the image to grayscale if it is in RGB format
 if image.ndim == 3:
     image = rgb2gray(image)
 
-# Resize the image to the desired dimensions (256x256) using anti-aliasing to reduce aliasing artifacts
+# Resize the image to 256x256
 image = resize(image, (256, 256), anti_aliasing=True)
 
 # Perform 2D FFT on the image and shift the zero-frequency component to the center
