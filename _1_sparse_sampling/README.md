@@ -18,7 +18,10 @@ Per esplorare questa idea, possiamo applicare diverse tecniche di campionamento 
 
 Per confrontare queste modalità, viene presa la stessa percentuale (10%) dei valori più alti e gli altri vengono posti a zero. Questo approccio permette di osservare l'effetto di ciascun tipo di campionamento sulla qualità dell'immagine finale e sulla compressione dei dati. I risultati mostrano che la modalità ottimale è quella che seleziona i coefficienti più alti, poiché essa conserva le informazioni più rilevanti per la ricostruzione dell’immagine. Tuttavia, la modalità gaussiana non si discosta molto da essa, dato che la FFT2D nel k-space tende a concentrarsi principalmente attorno al centro, il che rende simile il campionamento gaussiano al campionamento dei valori più alti.
 
-## Modalità di Condivisione dei Dati dopo il Campionamento della FFT2D
+![Figure_2](https://github.com/user-attachments/assets/b2363f85-79c4-40f7-99d4-8238c297bbf0)
+
+
+## Modalità di condivisione dei dati dopo il campionamento della FFT2D
 
 Una volta eseguito il campionamento del k-space, è importante considerare come i dati possano essere condivisi efficacemente. La FFT2D del k-space di un’immagine MRI rappresenta di fatto la forma grezza dei dati immediatamente ottenuta dalla risonanza. Pertanto, è possibile condividere direttamente il k-space dell'MRI, ma dopo il campionamento, diventa necessario conoscere le modalità con cui i dati sono stati campionati per poterli ricostruire correttamente.
 
