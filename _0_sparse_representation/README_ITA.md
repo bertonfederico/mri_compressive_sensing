@@ -1,6 +1,6 @@
 # Sparsità del segnale MRI
 
-La **rappresentazione sparsa** è un concetto fondamentale nell'elaborazione dei segnali, particolarmente utile per comprimere e rappresentare segnali che contengono una gran parte di informazioni in un numero ridotto di componenti significative. In generale, un segnale $x$ può essere rappresentato in una base (o dizionario) $\Psi$ come una combinazione lineare di pochi elementi:
+La **rappresentazione sparsa** è un concetto fondamentale nell'elaborazione dei segnali, particolarmente utile per comprimere e rappresentare segnali che contengono una gran parte di informazioni in un numero ridotto di componenti significative. In generale, un segnale $x$ può essere rappresentato in una base $\Psi$ come una combinazione lineare di pochi elementi:
 
 $$
 x = \Psi s
@@ -8,10 +8,21 @@ $$
 
 Dove:
 - $x$ è il segnale originale.
-- $\Psi$ è una matrice che rappresenta una **base ortonormale**.
+- $\Psi$ è una matrice che rappresenta una **base ortonormale** (oppure, se la rappresentazione quadrata non è sufficiente a garantire la sparsità desiderata, una matrice con un numero maggiore di colonne rispetto alle righe).
 - $s$ è un vettore di **coefficienti sparsi**, cioè un insieme di pesi che combinano le colonne di $\Psi$ per ricostruire $x$.
 
-Nel caso di segnali naturali, come MRI, la loro rappresentazione sparsa è spesso ben approssimata in basi come **Wavelet**, **Fourier** o **DCT**.
+
+Il problema si traduce nell'ottimizzare la seguente funzione:
+
+$$
+\mathbf{s}^* = \arg\min_{\mathbf{s}} \|\mathbf{x} - \Psi \mathbf{s}\|_2^2 \quad \text{s.t.} \quad \|\mathbf{s}\|_0 \leq k,
+$$
+
+dove $k$ rappresenta la quantità massima di coefficienti non nulli che si desidera utilizzare nella forma sparsa $s$.
+
+La risoluzione esatta del problema è **NP-hard**; per superare la complessità computazionale, si utilizza una forma rilassata del problema, sostituendo la norma $\ell_0$ (discontinua e non convessa) con la norma convessa. 
+
+Nel caso di segnali naturali, come MRI, la loro rappresentazione sparsa è spesso ben approssimata in basi come **Fourier**, **Wavelet** o **DCT**.
 
 # Trasformata di Fourier 2D
 
@@ -19,7 +30,7 @@ Nel caso delle immagini, la teoria generale della sparsità può essere applicat
 
 Nel caso delle immagini MRI, i dati acquisiti non sono direttamente immagini spaziali, ma sono misurazioni in quello che viene chiamato il **k-space**. Il k-space è una rappresentazione della frequenza spaziale dell'immagine, che descrive come le varie frequenze (o modelli spaziali) sono distribuite nell'immagine. Per ottenere l'immagine finale, i dati nel k-space devono essere trasformati nel dominio spaziale tramite l'inversa della trasformata di Fourier.
 
-La **trasformata di Fourier bidimensionale** (**DFT2D**) è una tecnica matematica utilizzata per trasformare un'immagine dal dominio spaziale al dominio delle frequenze spaziali (k-space per le immagini MRI). Questa trasformazione consente di rappresentare un'immagine come una combinazione di frequenze (componenti ad alta e bassa frequenza) anziché come una distribuzione di intensità spaziale.
+La **trasformata di Fourier bidimensionale** (**DFT2D**) è una tecnica matematica utilizzata per trasformare un'immagine dal dominio spaziale al dominio delle frequenze spaziali. Questa trasformazione consente di rappresentare un'immagine come una combinazione di frequenze (componenti ad alta e bassa frequenza) anziché come una distribuzione di intensità spaziale.
 
 In termini matematici, la **DFT2D** di un'immagine $f[x, y]$ (con $x$ e $y$ che rappresentano le coordinate spaziali dell'immagine) è data da:
 
@@ -27,7 +38,7 @@ $$
 F[u, v] = \sum_{x=0}^{M-1} \sum_{y=0}^{N-1} f[x, y] e^{-j2\pi \left(\frac{ux}{M} + \frac{vy}{N}\right)}
 $$
 
-Dove:
+dove:
 - $F[u, v]$ sono i coefficienti nel dominio delle frequenze,
 - $f[x, y]$ è il valore del pixel nell'immagine spaziale,
 - $M$ e $N$ sono le dimensioni dell'immagine,
@@ -39,7 +50,13 @@ Quando un'immagine è trasformata nel dominio delle frequenze con la DFT2D, essa
 - **Frequenze basse**: Si trovano vicino al centro del dominio delle frequenze e rappresentano le informazioni globali dell'immagine, come forme, contorni e altre strutture larghe e morbide.
 - **Frequenze alte**: Si trovano più lontano dal centro e rappresentano i dettagli fini, come i bordi, le texture e il rumore.
 
-Supponiamo di avere un'immagine $X$ di dimensioni $N \times M$. La sua rappresentazione in frequenza $s$ può essere ottenuta tramite la Trasformata di Fourier 2D. L'immagine $X$ è quindi rappresentata come:
+La DFT 2D è separabile lungo le righe e le colonne, il che significa che può essere calcolata come il prodotto di due DFT 1D. Le matrici Fourier separabili lungo le righe e le colonne, quindi, sono calcolate come:
+
+$$
+\Psi_{\text{row}}[i, j] = e^{-2\pi i \frac{ij}{n}} \quad \text{e} \quad \Psi_{\text{col}}[i, j] = e^{-2\pi i \frac{ij}{m}}
+$$
+
+dove \(i, j\) sono gli indici di riga e colonna. L'immagine $X$ è quindi rappresentata come:
 
 $$
 X = \Psi_{\text{row}}\ s\  \Psi_{\text{col}}^H
@@ -56,7 +73,7 @@ $$
 s = \Psi_{\text{row}}^H\ X\ \Psi_{\text{col}}^T
 $$
 
-La matrice $s$ contiene i coefficienti delle frequenze, cioè l'intensità delle sinusoidi che compongono l'immagine. Se l'immagine ha una struttura semplice o contiene solo poche frequenze rilevanti, i coefficienti $s$ saranno sparsi (molti di essi, in seguito alla normalizzazione, saranno zero o vicini a zero).
+La matrice $s$ contiene i coefficienti delle frequenze, cioè l'intensità delle sinusoidi che compongono l'immagine. Se l'immagine ha una struttura semplice o contiene solo poche frequenze rilevanti, i coefficienti $s$ saranno sparsi.
 
 Di seguito viene riportato il codice Python per eseguire tale formulazione matematica:
 
@@ -86,7 +103,7 @@ image_reconstructed = np.real(np.dot(Psi_row, np.dot(s, Psi_col.conj().T)))
 La Trasformata Wavelet Discreta (DWT) è una tecnica potente per analizzare segnali e immagini, che divide un segnale in componenti a diverse risoluzioni. Essa consente di rappresentare i segnali in modo sparso, concentrando la maggior parte delle informazioni nelle basse frequenze, e riducendo l'importanza delle alte frequenze. 
 
 In un contesto unidimensionale, la DWT è utilizzata per separare un segnale $x[n]$ in due componenti principali:
-- approssimazione (a bassa frequenza), tramite un filtr passa-basso
+- approssimazione (a bassa frequenza), tramite un filtro passa-basso
 $$A[n]=∑_k​x[k]h[2n−k]$$
 - dettagli (a alta frequenza), tramite un filtro passa-alto
 $$D[n]=∑_k​x[k]g[2n−k]$$

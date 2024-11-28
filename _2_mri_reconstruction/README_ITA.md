@@ -11,30 +11,16 @@ L'algoritmo **ISTA** è una tecnica iterativa utilizzata per risolvere problemi 
 1. **Errore di adattamento (termine di data fidelity)**: rappresenta la discrepanza tra la stima e i dati osservati.
 2. **Regolarizzazione (penalizzazione della sparsità)**: penalizza soluzioni non sparse, cioè soluzioni in cui molte variabili non sono zero.
 
-L'ISTA è comunemente utilizzato per risolvere il seguente problema di ottimizzazione:
+Il problema quindi si mostra nel modo seguente:
 
 $$
-\min_x \frac{1}{2} \| A x - y \|^2_2 + \lambda \| x \|_1
+\min_x\ \  L(x) + \lambda \| x \|_1
 $$
 
-Dove:
-- $A$ è la matrice di trasformazione
-- $y$ è il vettore di dati osservati
+dove:
+- $L(*)$ è la funzione di perdita
 - $x$ è la variabile da ricostruire
 - $\lambda$ è il parametro di regularizzazione che bilancia il trade-off tra l'adattamento ai dati e la sparsità della soluzione.
-
-### Estensione di ISTA con penalizzazione Wavelet e funzione $\Phi(x)$
-
-L'ISTA tradizionale usa la penalizzazione $\| x \|_1$, ovvero la norma $l_1$ dei coefficienti dell'immagine. Tuttavia, come già citato il dominio che presenta miglior sparsità è Wavelet.
-L'uso delle Wavelet consente di rappresentare l'immagine in termini di una serie di coefficienti che possono essere sparsi. Una trasformata Wavelet scompone un'immagine in una serie di coefficienti a diverse risoluzioni, che descrivono la struttura dell'immagine a diverse scale.
-
-La funzione obiettivo dell'ISTA può quindi essere modificata per applicare la penalizzazione $l_1$ sui coefficienti Wavelet, piuttosto che sui valori dell'immagine. Questo porta al seguente problema:
-
-$$\min_x \frac{1}{2} \| A x - y \|^2_2 + \lambda \| W(x) \|_1$$
-
-dove $W(x)$ è la funzione Wavelet applicata all'immagine $x$, e quindi la norma $l_1$ è ora applicata sui coefficienti Wavelet.
-
-Nella versione tradizionale di ISTA, il modello di osservazione è descritto da un sistema lineare, in cui i dati osservati y sono ottenuti applicando una matrice A a un vettore $x$, ovvero $y=Ax+r$, dove $r$ è il rumore. In questo contesto, la matrice $A$ rappresenta un operatore che mappa il vettore $x$ nel dominio delle osservazioni $y$.
 
 La funzione di perdita in questo caso è
 
@@ -48,13 +34,20 @@ $$∇_x​L(x)=Φ_T(Φ(x)−y)$$
 
 dove $Φ_T$ consiste nell'applicazione della maschera e la successiva inversione della FFT2D.
 
-### Passi iterativi dell'algoritmo
+### Estensione di ISTA con penalizzazione Wavelet e funzione $\Phi(x)$
 
-L'algoritmo segue una struttura con una penalizzazione basata sulle Wavelet:
+L'ISTA tradizionale usa la penalizzazione $\| x \|_1$, ovvero la norma $l_1$ dei coefficienti dell'immagine. Tuttavia, come già citato il dominio che presenta miglior sparsità è Wavelet.
+L'uso delle Wavelet consente di rappresentare l'immagine in termini di una serie di coefficienti che possono essere sparsi. Una trasformata Wavelet scompone un'immagine in una serie di coefficienti a diverse risoluzioni, che descrivono la struttura dell'immagine a diverse scale.
+
+La funzione obiettivo dell'ISTA può quindi essere modificata per applicare la penalizzazione $l_1$ sui coefficienti Wavelet ($W(x)$), piuttosto che sui valori dell'immagine. Questo porta al seguente problema:
+
+$$\min_x \ L(x) + \lambda \| W(x) \|_1$$
+
+### Passi iterativi dell'algoritmo
 
   1. **Passo di gradiente discendente**: viene calcolato il residuo $r = y - \Phi(x)$, dove $\Phi$ rappresenta la trasformazione legata alla FFT e alla maschera di undersampling. Successivamente, viene effettuato un passo di gradiente discendente:
 
-  $$x^{k+1} = x^k - \alpha \nabla f(x^k) = x^k + \alpha \  \Phi_T(r)$$
+  $$x^{k+1} = x^k - \alpha \nabla L(x^k) = x^k + \alpha \  \Phi_T(r)$$
 
   2. **Passo di soft-thresholding sui coefficienti Wavelet**: dopo il passo di gradiente, il codice esegue una decomposizione Wavelet sull'immagine aggiornata $x^{k+1}$; questa trasformazione scompone l'immagine in una serie di coefficienti a diversi livelli di risoluzione. Successivamente, il soft-thresholding è applicato a ciascun coefficiente: a questo punto, i coefficienti di piccole dimensioni sono ridotti a zero, portando a una soluzione più sparsa.
  
@@ -141,7 +134,7 @@ def ISTA_MRI_reconstruction(y, mask, lam, max_iter=1000, tol=1e-5, step_size = 0
 
 
 ## ADMM con TOTAL VARIATION
-L'Alternating Direction Method of Multipliers (ADMM) è una tecnica di ottimizzazione particolarmente adatta per problemi che combinano più termini di costo, ciascuno dei quali richiede una diversa forma di regolarizzazione. Questo approccio si applica bene alla ricostruzione di immagini MRI sottocampionate, dove vogliamo contemporaneamente preservare i dati misurati e ottenere un'immagine "pulita" e priva di artefatti. La penalizzazione di Variazione Totale (TV) è un metodo comunemente usato per questo scopo, in quanto minimizza le variazioni locali senza sfocare eccessivamente i bordi, preservando i dettagli strutturali importanti dell'immagine.
+L'Alternating Direction Method of Multipliers (ADMM) è una tecnica di ottimizzazione particolarmente adatta per problemi che combinano più termini di costo, ciascuno dei quali richiede una diversa forma di regolarizzazione. Questo approccio si applica bene alla ricostruzione di immagini MRI sottocampionate, dove vogliamo contemporaneamente preservare i dati misurati e ottenere un'immagine "pulita" e priva di artefatti.
 Consideriamo il problema della ricostruzione di un'immagine x da dati incompleti del k-spazio k. L'obiettivo è trovare un'immagine che:
 - rispetti i dati misurati nel k-spazio (ovvero le frequenze osservate)
 - riduca il rumore e gli artefatti che possono derivare dall'undersampling tramite la regolarizzazione.
@@ -262,8 +255,6 @@ def admm_mri_tv_reconstruction(kspace_sub, mask, lam=0.1, num_iters=50):
 
 
 ## ADMM con Wavelet
-Mentre la regularizzazione TV è efficace nel preservare i contorni attraverso penalizzazioni sui gradienti e garantire una certa regolarità nell'immagine, la regularizzazione basata su Wavelet si dimostra particolarmente utile in applicazioni come la ricostruzione delle immagini MRI, dove le immagini tendono ad avere caratteristiche a più scale che possono essere rappresentate in modo sparso nel dominio delle Wavelet.
-
 L'algoritmo ADMM con regularizzazione Wavelet differisce da quello con regularizzazione TV  nella fase di regolarizzazione. Invece di applicare una penalizzazione sui gradienti dell'immagine (come nel caso del TV), applica una sogliatura ai coefficienti di Wavelet dell'immagine.
 
 In forma primale, il problema si pone come

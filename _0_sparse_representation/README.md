@@ -1,6 +1,6 @@
 # MRI signal sparsity
 
-Sparse **representation** is a fundamental concept in signal processing, particularly useful for compressing and representing signals that contain a large amount of information into a small number of meaningful components. In general, a signal $x$ can be represented in a basis (or dictionary) $\Psi$ as a linear combination of a few elements:
+Sparse **representation** is a fundamental concept in signal processing, particularly useful for compressing and representing signals that contain a large amount of information into a small number of meaningful components. In general, a signal $x$ can be represented in a $\Psi$ basis as a linear combination of a few elements:
 
 $$
 x = \Psi s
@@ -8,18 +8,29 @@ $$
 
 where:
 - $x$ is the original signal.
-- $\Psi$ is a matrix representing an **hormonal basis**.
-- $s$ is a vector of **scattered coefficients**, i.e., a set of weights that combine the columns of $\Psi$ to reconstruct $x$.
+- $\Psi$ is a matrix representing an **hormonal basis** (or, if the square representation is not sufficient to guarantee the desired sparsity, a matrix with more columns than rows).
+- $s$ is a vector of **sparsity coefficients**, i.e., a set of weights that combine the columns of $\Psi$ to reconstruct $x$.
 
-In the case of natural signals, such as MRI, their sparse representation is often well approximated in bases such as **Wavelet**, **Fourier** or **DCT**.
 
-# 2D Fourier transform**
+The problem results in optimizing the following function:
+
+$$
+\mathbf{s}^* = \arg\min_{\mathbf{s}} \|\mathbf{x} - \Psi \mathbf{s}\|_2^2 \quad \text{s.t.} \quad \|\mathbf{s}\|_0 \leq k,
+$$
+
+where $k$ represents the maximum amount of nonzero coefficients you want to use in the sparse form $s$.
+
+The exact resolution of the problem is **NP-hard**; to overcome computational complexity, a relaxed form of the problem is used, replacing the $\ell_0$ norm (discontinuous and nonconvex) with the convex norm. 
+
+In the case of natural signals, such as MRI, their sparse representation is often well approximated in bases such as **Fourier**, **Wavelet** or **DCT**.
+
+# 2D Fourier transform
 
 In the case of images, the general theory of sparsity can be applied using the **Discrete Fourier Transform (DFT)**, which is an orthonormal basis for representing an image in the frequency domain.
 
 In the case of MRI images, the data acquired are not directly spatial images, but are measurements in what is called the **k-space**. The k-space is a representation of the spatial frequency of the image, describing how the various frequencies (or spatial patterns) are distributed in the image. To obtain the final image, the data in the k-space must be transformed to the spatial domain by the inverse of the Fourier transform.
 
-The **two-dimensional Fourier transform** (**DFT2D**) is a mathematical technique used to transform an image from the spatial domain to the spatial frequency domain (k-space for MRI images). This transformation allows an image to be represented as a combination of frequencies (high-frequency and low-frequency components) rather than as a spatial intensity distribution.
+The **two-dimensional Fourier transform** (**DFT2D**) is a mathematical technique used to transform an image from the spatial domain to the spatial frequency domain. This transform allows an image to be represented as a combination of frequencies (high-frequency and low-frequency components) rather than as a spatial intensity distribution.
 
 In mathematical terms, the **DFT2D** of an image $f[x, y]$ (with $x$ and $y$ representing the spatial coordinates of the image) is given by:
 
@@ -39,7 +50,13 @@ When an image is transformed into the frequency domain with DFT2D, it is represe
 - **Low frequencies**: These lie near the center of the frequency domain and represent the global information of the image, such as shapes, contours, and other broad and soft structures.
 - **High frequencies**: These are located farther from the center and represent fine details, such as edges, textures, and noise.
 
-Suppose we have an image $X$ of size $N \times M$. Its frequency representation $s$ can be obtained by the 2D Fourier Transform. The image $X$ is then represented as:
+The 2D DFT is separable along rows and columns, which means it can be calculated as the product of two 1D DFTs. Separable Fourier matrices along rows and columns, therefore, are computed as:
+
+$$
+\Psi_{\text{row}}[i, j] = e^{-2\pi i \frac{ij}{n}} \quad \text{e} \quad \Psi_{\text{col}}[i, j] = e^{-2pi i \frac{ij}{m}}
+$$
+
+where \(i, j\) are the row and column indices. The image $X$ is then represented as:
 
 $$
 X = \Psi_{\text{row}}\ s\  \Psi_{\text{col}}^H
@@ -56,7 +73,7 @@ $$
 s = \Psi_{\text{row}}^H\ X\ \Psi_{\text{col}}^T
 $$
 
-The $s$ matrix contains the coefficients of the frequencies, that is, the intensities of the sine waves that make up the image. If the image has a simple structure or contains only a few relevant frequencies, the $s$ coefficients will be scattered (many of them, upon normalization, will be zero or close to zero).
+The $s$ matrix contains the coefficients of the frequencies, that is, the intensities of the sine waves that make up the image. If the image has a simple structure or contains only a few relevant frequencies, the $s$ coefficients will be scattered.
 
 The Python code to perform such a mathematical formulation is given below:
 
@@ -86,9 +103,9 @@ image_reconstructed = np.real(np.dot(Psi_row, np.dot(s, Psi_col.conj().T)))
 The Discrete Wavelet Transform (DWT) is a powerful technique for analyzing signals and images, dividing a signal into components at different resolutions. It allows signals to be represented in a sparse manner, concentrating most of the information in low frequencies, and reducing the importance of high frequencies. 
 
 In a one-dimensional context, DWT is used to separate an $x[n]$ signal into two main components:
-- (low-frequency) approximation, via a low-pass filtering
+- approximation(low-frequency), via a low-pass filtering
 $$A[n]=∑_k​x[k]h[2n−k]$$
-- details (high frequency), via a high-pass filter
+- details (high frequency), via a high-pass filtering
 $$D[n]=∑_k​x[k]g[2n−k]$$
 
 The 2D DWT extends the 1D DWT to two-dimensional images (data matrices). In this 2D version, you apply DWT separately to the rows and columns of the image:

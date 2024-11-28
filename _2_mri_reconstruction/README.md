@@ -11,30 +11,16 @@ The **ISTA** algorithm is an iterative technique used to solve optimization prob
 1. **Fitting error (data fidelity term)**: represents the discrepancy between the estimate and the observed data.
 2. **Regularization (sparsity penalty)**: penalizes nonsparsity solutions, that is, solutions in which many variables are nonzero.
 
-ISTA is commonly used to solve the following optimization problem:
+The problem then shows itself in the following way:
 
 $$
-\min_x \frac{1}{2} \| A x - y \|^2_2 + \lambda \| x \|_1
+\min_x\ L(x) + \lambda \| x \|_1
 $$
 
 where:
-- $A$ is the transformation matrix
-- $y$ is the vector of observed data
+- $L(*)$ is the loss function
 - $x$ is the variable to be reconstructed
 - $\lambda$ is the regularization parameter that balances the trade-off between the fit to the data and the sparsity of the solution.
-
-### Extension of ISTA with wavelet penalty and function $\Phi(x)$
-
-Traditional ISTA uses the $\| x \|_1$ penalty, i.e., the $l_1$ norm of the image coefficients. However, as mentioned above the domain with better sparsity is Wavelet.
-The use of wavelets makes it possible to represent the image in terms of a set of coefficients that can be sparse. A wavelet transform decomposes an image into a series of coefficients at different resolutions, which describe the structure of the image at different scales.
-
-The ISTA objective function can then be modified to apply the $l_1$ penalty on the wavelet coefficients, rather than on the image values. This leads to the following problem:
-
-$$\min_x \frac{1}{2} \| A x - y \|^2_2 + \lambda \| W(x) \|_1$$
-
-where $W(x)$ is the wavelet function applied to the image $x$, and thus the $l_1$ norm is now applied on the wavelet coefficients.
-
-In the traditional version of ISTA, the observation model is described by a linear system, where the observed data y are obtained by applying a matrix A to a vector $x$, i.e., $y=Ax+r$, where $r$ is the noise. In this context, the matrix $A$ represents an operator that maps the vector $x$ to the domain of observations $y$.
 
 The loss function in this case is
 
@@ -48,13 +34,20 @@ $$∇_x​L(x)=Φ_T(Φ(x)−y)$$
 
 where $Φ_T$ consists of the application of the mask and the subsequent inversion of FFT2D.
 
-### Iterative steps of the algorithm
+### Extension of ISTA with wavelet penalty and $\Phi(x)$ function
 
-The algorithm follows a structure with a wavelet-based penalty:
+Traditional ISTA uses the $\| x \|_1$ penalty, i.e., the $l_1$ norm of the image coefficients. However, as mentioned above the domain with better sparsity is Wavelet.
+The use of wavelets makes it possible to represent the image in terms of a set of coefficients that can be sparse. A wavelet transform decomposes an image into a series of coefficients at different resolutions, which describe the structure of the image at different scales.
+
+The ISTA objective function can then be modified to apply the $l_1$ penalty on the wavelet coefficients ($W(x)$), rather than on the image values. This leads to the following problem:
+
+$$\min_x\ \ L(x) + \lambda \| W(x) \|_1$$
+
+### Iterative steps of the algorithm
 
   1. **Descending gradient step**: the residual $r = y - \Phi(x)$ is calculated, where $\Phi$ represents the transformation related to the FFT and the undersampling mask. Next, a descending gradient step is performed:
 
-  $$x^{k+1} = x^k - \alpha \nabla f(x^k) = x^k + \alpha \  \Phi_T(r)$$
+  $$x^{k+1} = x^k - \alpha \nabla L(x^k) = x^k + \alpha \  \Phi_T(r)$$
 
   2. **Soft-thresholding step on Wavelet coefficients**: after the gradient step, the code performs a Wavelet decomposition on the updated $x^{k+1}$ image; this transformation decomposes the image into a series of coefficients at different levels of resolution. Next, soft-thresholding is applied to each coefficient: at this point, small coefficients are reduced to zero, leading to a more sparse solution.
  
@@ -141,7 +134,7 @@ def ISTA_MRI_reconstruction(y, mask, lam, max_iter=1000, tol=1e-5, step_size = 0
 
 
 ## ADMM with TOTAL VARIATION
-The Alternating Direction Method of Multipliers (ADMM) is an optimization technique particularly suitable for problems that combine multiple cost terms, each of which requires a different form of regularization. This approach applies well to the reconstruction of undersampled MRI images, where we want to simultaneously preserve the measured data and obtain a “clean” image free of artifacts. Total Variation (TV) penalization is a commonly used method for this purpose, as it minimizes local variations without excessively blurring the edges, preserving important structural details of the image.
+The Alternating Direction Method of Multipliers (ADMM) is an optimization technique particularly suitable for problems that combine multiple cost terms, each of which requires a different form of regularization. This approach applies well to the reconstruction of undersampled MRI images, where we want to simultaneously preserve the measured data and obtain a “clean” image free of artifacts.
 Consider the problem of reconstructing an image x from incomplete k-space data k. The goal is to find an image that:
 - respects the measured k-space data (i.e., the observed frequencies)
 - reduces noise and artifacts that may result from undersampling through regularization.
@@ -262,8 +255,6 @@ def admm_mri_tv_reconstruction(kspace_sub, mask, lam=0.1, num_iters=50):
 
 
 ## ADMM with Wavelet
-While TV regularization is effective in preserving contours through gradient penalties and ensuring some regularity in the image, Wavelet-based regularization proves particularly useful in applications such as MRI image reconstruction, where images tend to have features at multiple scales that can be represented in a sparse manner in the Wavelet domain.
-
 The ADMM algorithm with wavelet regularization differs from that with TV regularization in the regularization step. Instead of applying a penalty on the gradients of the image (as in the case of TV), it applies a thresholding to the wavelet coefficients of the image.
 
 In primary form, the problem is posed as.
