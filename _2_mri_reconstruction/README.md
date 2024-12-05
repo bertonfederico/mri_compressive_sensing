@@ -6,10 +6,10 @@ In this section, after completing the sparse representation of the image and its
 
 ## ISTA (Iterative Shrinkage-Thresholding algorithm)
 
-The **ISTA** algorithm is an iterative technique used to solve optimization problems in which an attempt is made to minimize an objective function consisting of two main terms:
+The ISTA algorithm is an iterative technique used to solve optimization problems in which an attempt is made to minimize an objective function consisting of two main terms:
 
-1. **Fitting error (data fidelity term)**: represents the discrepancy between the estimate and the observed data.
-2. **Regularization (sparsity penalty)**: penalizes nonsparsity solutions, that is, solutions in which many variables are nonzero.
+1. Fitting error (data fidelity term): represents the discrepancy between the estimate and the observed data.
+2. Regularization (sparsity penalty): penalizes nonsparsity solutions, that is, solutions in which many variables are nonzero.
 
 The problem then shows itself in the following way:
 
@@ -45,20 +45,20 @@ $$\min_x\ \ L(x) + \lambda \| W(x) \|_1$$
 
 ### Iterative steps of the algorithm
 
-  1. **Descending gradient step**: the residual $r = y - \Phi(x)$ is calculated, where $\Phi$ represents the transformation related to the FFT and the undersampling mask. Next, a descending gradient step is performed:
+  1. Descending gradient step: the residual $r = y - \Phi(x)$ is calculated, where $\Phi$ represents the transformation related to the FFT and the undersampling mask. Next, a descending gradient step is performed:
 
   $$x^{k+1} = x^k - \alpha \nabla L(x^k) = x^k + \alpha \  \Phi_T(r)$$
 
-  2. **Soft-thresholding step on Wavelet coefficients**: after the gradient step, the code performs a Wavelet decomposition on the updated $x^{k+1}$ image; this transformation decomposes the image into a series of coefficients at different levels of resolution. Next, soft-thresholding is applied to each coefficient: at this point, small coefficients are reduced to zero, leading to a more sparse solution.
+  2. Soft-thresholding step on Wavelet coefficients: after the gradient step, the code performs a Wavelet decomposition on the updated $x^{k+1}$ image; this transformation decomposes the image into a series of coefficients at different levels of resolution. Next, soft-thresholding is applied to each coefficient: at this point, small coefficients are reduced to zero, leading to a more sparse solution.
  
   $$z^{k+1} = wavelet(x^{k+1})$$
   $$S_\lambda(z^{k+1}) = \text{sign}(z^{k+1}) \cdot \max(|z^{k+1}| - \lambda, 0)$$
 
-  3. **Image reconstruction step**: Once the wavelet coefficients are subject to soft-thresholding, the image is reconstructed through the inverse of the wavelet transform:
+  3. Image reconstruction step: Once the wavelet coefficients are subject to soft-thresholding, the image is reconstructed through the inverse of the wavelet transform:
      
   $$x^{k+1} = wavelet_T(S_\lambda(z^{k+1}))$$
   
-  3. **Convergence check**: finally, the code checks convergence by comparing the difference between the current solution and the previous solution. If the difference is less than a tolerance $\text{tol}$, or if the number of iterations reaches a threshold, the algorithm stops. 
+  3. Convergence check: finally, the code checks convergence by comparing the difference between the current solution and the previous solution. If the difference is less than a tolerance $\text{tol}$, or if the number of iterations reaches a threshold, the algorithm stops. 
 
 ### Algorithm code
 

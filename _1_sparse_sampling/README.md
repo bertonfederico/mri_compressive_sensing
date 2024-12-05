@@ -16,11 +16,11 @@ In the context of k-space, this translates into the ability to undersample in a 
 
 To explore this idea, we can apply different sampling techniques in the k-space after performing a 2D FFT transform of the MRI image. To simplify the sampling process, a mask was chosen because the sampling modes based on it are more intuitive and computationally less complex. Three different sampling modes are considered for compression:
 
-1. **Gaussian sampling**: in this mode, k-space values are sampled following a Gaussian distribution, concentrating the sampling more toward the center of the k-space.
+1. Gaussian sampling: in this mode, k-space values are sampled following a Gaussian distribution, concentrating the sampling more toward the center of the k-space.
    
-2. **Random sampling**: in this mode, k-space values are chosen randomly, without any priority, to create a sample selection that does not follow a specific pattern.
+2. Random sampling: in this mode, k-space values are chosen randomly, without any priority, to create a sample selection that does not follow a specific pattern.
 
-3. **Threshold sampling**: here, only the coefficients in the k-space that exceed a certain amplitude threshold are selected, excluding the lowest values, which generally contain less meaningful information for the image.
+3. Threshold sampling: here, only the coefficients in the k-space that exceed a certain amplitude threshold are selected, excluding the lowest values, which generally contain less meaningful information for the image.
 
 To compare these modes, the same percentage (10%) of the highest values is taken and the others are set to zero. This approach allows observing the effect of each sampling type on the final image quality and data compression. The results show that the optimal mode is the one that selects the highest coefficients, since it retains the most relevant information for image reconstruction. However, the Gaussian mode does not differ much from it, since the FFT2D in the k-space tends to concentrate mainly around the center, which makes Gaussian sampling similar to sampling the highest values.
 
@@ -31,15 +31,15 @@ To compare these modes, the same percentage (10%) of the highest values is taken
 
 Once k-space sampling has been performed, it is important to consider how the data can be shared effectively. The FFT2D of the k-space of an MRI image actually represents the raw form of the data immediately obtained from the MRI. Therefore, it is possible to share the k-space of the MRI directly, but after sampling, it becomes necessary to know the modes by which the data were sampled in order to reconstruct them correctly.
 
-- **Gaussian and random modes**: for these two modes, a fixed sampling mask could be used, which would eliminate the need to transmit additional information about how the data were sampled. This solution would simplify data management after sampling.
+- Gaussian and random modes: for these two modes, a fixed sampling mask could be used, which would eliminate the need to transmit additional information about how the data were sampled. This solution would simplify data management after sampling.
 
-- **Mode of selecting the most significant values**: in the case of sampling based on selecting the highest values, it is necessary to somehow share additional information regarding the location of the sampled values in the k-space. Since the values are selected non-uniformly, it is necessary to know exactly which coefficients were chosen in order to reconstruct the image correctly.
+- Mode of selecting the most significant values: in the case of sampling based on selecting the highest values, it is necessary to somehow share additional information regarding the location of the sampled values in the k-space. Since the values are selected non-uniformly, it is necessary to know exactly which coefficients were chosen in order to reconstruct the image correctly.
 
 To address this need, two ways to represent the sampled data were tested:
 
-1. **COO (Coordinate Format)**: this mode represents the data as a sparse matrix, storing only nonzero values and their positions. The index of rows and columns are stored separately, greatly reducing the amount of data to be transmitted compared to a full matrix.
+1. COO (Coordinate Format): this mode represents the data as a sparse matrix, storing only nonzero values and their positions. The index of rows and columns are stored separately, greatly reducing the amount of data to be transmitted compared to a full matrix.
 
-2. **RLE (Run-Length Encoding)**: RLE is a compression technique that represents consecutive sequences of equal values (runs) as a pair of value and frequency (i.e., the value itself and the number of times it repeats). In the context of k-space, this mode can be useful for compressing areas where many coefficients are zero or have similar values, reducing the amount of data to be transmitted.
+2. RLE (Run-Length Encoding): RLE is a compression technique that represents consecutive sequences of equal values (runs) as a pair of value and frequency (i.e., the value itself and the number of times it repeats). In the context of k-space, this mode can be useful for compressing areas where many coefficients are zero or have similar values, reducing the amount of data to be transmitted.
 
 <table align="center">
   <tr>

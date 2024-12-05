@@ -1,6 +1,6 @@
 # MRI signal sparsity
 
-Sparse **representation** is a fundamental concept in signal processing, particularly useful for compressing and representing signals that contain a large amount of information into a small number of meaningful components. In general, a signal $x$ can be represented in a $\Psi$ basis as a linear combination of a few elements:
+Sparse representation is a fundamental concept in signal processing, particularly useful for compressing and representing signals that contain a large amount of information into a small number of meaningful components. In general, a signal $x$ can be represented in a $\Psi$ basis as a linear combination of a few elements:
 
 $$
 x = \Psi s
@@ -8,8 +8,8 @@ $$
 
 where:
 - $x$ is the original signal.
-- $\Psi$ is a matrix representing an **hormonal basis** (or, if the square representation is not sufficient to guarantee the desired sparsity, a matrix with more columns than rows).
-- $s$ is a vector of **sparsity coefficients**, i.e., a set of weights that combine the columns of $\Psi$ to reconstruct $x$.
+- $\Psi$ is a matrix representing an hormonal basis (or, if the square representation is not sufficient to guarantee the desired sparsity, a matrix with more columns than rows).
+- $s$ is a vector of sparsity coefficients, i.e., a set of weights that combine the columns of $\Psi$ to reconstruct $x$.
 
 
 The problem results in optimizing the following function:
@@ -20,19 +20,19 @@ $$
 
 where $k$ represents the maximum amount of nonzero coefficients you want to use in the sparse form $s$.
 
-The exact resolution of the problem is **NP-hard**; to overcome computational complexity, a relaxed form of the problem is used, replacing the $\ell_0$ norm (discontinuous and nonconvex) with the convex norm. 
+The exact resolution of the problem is NP-hard; to overcome computational complexity, a relaxed form of the problem is used, replacing the $\ell_0$ norm (discontinuous and nonconvex) with the convex norm. 
 
-In the case of natural signals, such as MRI, their sparse representation is often well approximated in bases such as **Fourier**, **Wavelet** or **DCT**.
+In the case of natural signals, such as MRI, their sparse representation is often well approximated in bases such as Fourier, Wavelet or DCT.
 
 # 2D Fourier transform
 
-In the case of images, the general theory of sparsity can be applied using the **Discrete Fourier Transform (DFT)**, which is an orthonormal basis for representing an image in the frequency domain.
+In the case of images, the general theory of sparsity can be applied using the Discrete Fourier Transform (DFT), which is an orthonormal basis for representing an image in the frequency domain.
 
-In the case of MRI images, the data acquired are not directly spatial images, but are measurements in what is called the **k-space**. The k-space is a representation of the spatial frequency of the image, describing how the various frequencies (or spatial patterns) are distributed in the image. To obtain the final image, the data in the k-space must be transformed to the spatial domain by the inverse of the Fourier transform.
+In the case of MRI images, the data acquired are not directly spatial images, but are measurements in what is called the k-space. The k-space is a representation of the spatial frequency of the image, describing how the various frequencies (or spatial patterns) are distributed in the image. To obtain the final image, the data in the k-space must be transformed to the spatial domain by the inverse of the Fourier transform.
 
-The **two-dimensional Fourier transform** (**DFT2D**) is a mathematical technique used to transform an image from the spatial domain to the spatial frequency domain. This transform allows an image to be represented as a combination of frequencies (high-frequency and low-frequency components) rather than as a spatial intensity distribution.
+The two-dimensional Fourier transform (DFT2D) is a mathematical technique used to transform an image from the spatial domain to the spatial frequency domain. This transform allows an image to be represented as a combination of frequencies (high-frequency and low-frequency components) rather than as a spatial intensity distribution.
 
-In mathematical terms, the **DFT2D** of an image $f[x, y]$ (with $x$ and $y$ representing the spatial coordinates of the image) is given by:
+In mathematical terms, the DFT2D of an image $f[x, y]$ (with $x$ and $y$ representing the spatial coordinates of the image) is given by:
 
 $$
 F[u, v] = \sum_{x=0}^{M-1} \sum_{y=0}^{N-1} f[x, y] e^{-j2\pi \left(\frac{ux}{M} + \frac{vy}{N}\right)}
@@ -47,8 +47,8 @@ where:
 
 When an image is transformed into the frequency domain with DFT2D, it is represented as a combination of low frequencies and high frequencies:
 
-- **Low frequencies**: These lie near the center of the frequency domain and represent the global information of the image, such as shapes, contours, and other broad and soft structures.
-- **High frequencies**: These are located farther from the center and represent fine details, such as edges, textures, and noise.
+- Low frequencies: These lie near the center of the frequency domain and represent the global information of the image, such as shapes, contours, and other broad and soft structures.
+- High frequencies: These are located farther from the center and represent fine details, such as edges, textures, and noise.
 
 The 2D DFT is separable along rows and columns, which means it can be calculated as the product of two 1D DFTs. Separable Fourier matrices along rows and columns, therefore, are computed as:
 
@@ -228,37 +228,37 @@ plt.show()
 
 In the context of sparse sensing and image compression, a comparison of three transforms: FFT2D, and DCT was carried out. The objective of the comparison is to analyze the following characteristics:
 
-1. **Sparsity of transformations**
-2. **Computational Complexity**
+1. Sparsity of transformations
+2. Computational Complexity
 
 The three transforms were applied to the image without dividing it into blocks, being the de facto mode of execution in the clinical setting.
 
-### 1. **Sparsity of Transforms**
+### 1. Sparsity of Transforms
 
-The sparsity of a transform is measured as the percentage of normalized values that are less than a predefined threshold. Normalization is done by dividing the absolute values of the transform by the maximum value of the transform, resulting in values between 0 and 1. The thresholds used to calculate sparsity are $t = 0$ and $t = 0.00001$, and **sparsity** is calculated as:
+The sparsity of a transform is measured as the percentage of normalized values that are less than a predefined threshold. Normalization is done by dividing the absolute values of the transform by the maximum value of the transform, resulting in values between 0 and 1. The thresholds used to calculate sparsity are $t = 0$ and $t = 0.00001$, and sparsity is calculated as:
 
 $$Sparsità = \frac{\text{Numero di elementi sotto la soglia}}{\text{Numero totale di elementi}} \times 100$$
 
-### 2. **Computational Complexity**
+### 2. Computational Complexity
 
 The computational complexity of each transform was measured in terms of execution time. The complexity of each method, expressed in O-large notation, is as follows:
 
-- **FFT2D**:
-  The two-dimensional **FFT** is an optimized version of the **Fourier Transform**. Its computational complexity is:
+- FFT2D:
+  The two-dimensional FFT is an optimized version of the Fourier Transform. Its computational complexity is:
 
   $$O(n^2 \log n)$$
 
   This is because the FFT reduces the number of operations required by separating the calculations on the rows and columns of the image.
 
-- **Wavelet**:
-  The **wavelet transform** decompresses the image into a series of coefficients at different scales. Its computational complexity is:
+- Wavelet:
+  The wavelet transform decompresses the image into a series of coefficients at different scales. Its computational complexity is:
 
   $$O(n^2)$$
 
   Wavelet is an iterative process that performs a multi-resolution transform, but requires fewer operations than a full transform.
 
-- **DCT**:
-  The **Discrete Cosine Transform** is used in compression applications, such as in JPEG. Its computational complexity is similar to that of the wavelet:
+- DCT:
+  The Discrete Cosine Transform is used in compression applications, such as in JPEG. Its computational complexity is similar to that of the wavelet:
 
   $$O(n^2)$$
 
