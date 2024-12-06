@@ -39,13 +39,12 @@ $$
 where:
 - $F[u, v]$ are the coefficients in the frequency domain,
 - $f[x, y]$ is the pixel value in the spatial image,
-- $M$ and $N$ are the dimensions of the image,
-- $u$ and $v$ represent the spatial frequencies in the directions $x$ and $y$,
+- $M$ and $N$ are the dimensions of the image.
 
 When an image is transformed into the frequency domain with DFT2D, it is represented as a combination of low frequencies and high frequencies:
 
-- Low frequencies: these lie near the center of the frequency domain and represent the global information of the image, such as shapes, contours, and other broad and soft structures.
-- High frequencies: these are located farther from the center and represent fine details, such as edges, textures, and noise.
+- Low frequencies: they are located near the center of the frequency domain and represent global image information, as homogeneous areas;
+- High frequencies: these are located further from the center and represent fine details, but also noise.
 
 The 2D DFT is separable along rows and columns, which means it can be calculated as the product of two 1D DFTs. Separable Fourier matrices along rows and columns, therefore, are computed as:
 
@@ -223,7 +222,7 @@ plt.show()
 
 In the context of the sparse sensinge of image compression, a comparison was made regarding the sparsity obtained through the three techniques used, with the use of different thresholds to establish the negligibility of the values obtained.
 
-As can be seen, the wavelet has a peculiarity: with a threshold of zero, many of its coefficients are exactly zero, resulting in a relatively high sparsity value even when the threshold is zero.
+As can be seen from the data below, the wavelet has a peculiarity: with a threshold of zero, many of its coefficients are exactly zero, resulting in a relatively high sparsity value even when the threshold is zero.
 
 In contrast, in the FFT and DCT transforms, with threshold equal to zero, no coefficient falls within that range. When the threshold value is increased, however, there is a spike in sparsity: many coefficients are eliminated, leading to a marked reduction in the amount of significant data and increasing sparsity considerably.
 
