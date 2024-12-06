@@ -8,7 +8,7 @@ $$
 
 where:
 - $x$ is the original signal.
-- $\Psi$ is a matrix representing an hormonal basis (or, if the square representation is not sufficient to guarantee the desired sparsity, a matrix with more columns than rows).
+- $\Psi$ represents the base in which the signal $x$ results scattered.
 - $s$ is a vector of sparsity coefficients, i.e., a set of weights that combine the columns of $\Psi$ to reconstruct $x$.
 
 
@@ -28,11 +28,9 @@ In the case of natural signals, such as MRI, their sparse representation is ofte
 
 In the case of images, the general theory of sparsity can be applied using the Discrete Fourier Transform (DFT), which is an orthonormal basis for representing an image in the frequency domain.
 
-In the case of MRI images, the data acquired are not directly spatial images, but are measurements in what is called the k-space. The k-space is a representation of the spatial frequency of the image, describing how the various frequencies (or spatial patterns) are distributed in the image. To obtain the final image, the data in the k-space must be transformed to the spatial domain by the inverse of the Fourier transform.
+In the case of MRI images, the data acquired are not directly spatial images, but are measurements in what is called the k-space. The k-space is a representation of the spatial frequency of the image, describing how the various frequencies are distributed in the image. To obtain the final image, the data in the k-space must be transformed to the spatial domain by the inverse of the Fourier transform.
 
-The two-dimensional Fourier transform (DFT2D) is a mathematical technique used to transform an image from the spatial domain to the spatial frequency domain. This transform allows an image to be represented as a combination of frequencies (high-frequency and low-frequency components) rather than as a spatial intensity distribution.
-
-In mathematical terms, the DFT2D of an image $f[x, y]$ (with $x$ and $y$ representing the spatial coordinates of the image) is given by:
+The two-dimensional Fourier transform (DFT2D) is a mathematical technique used to transform an image from the spatial domain to the  frequency domain. In mathematical terms, the DFT2D of an image $f[x, y]$ (with $x$ and $y$ representing the spatial coordinates of the image) is given by:
 
 $$
 F[u, v] = \sum_{x=0}^{M-1} \sum_{y=0}^{N-1} f[x, y] e^{-j2\pi \left(\frac{ux}{M} + \frac{vy}{N}\right)}
@@ -43,12 +41,11 @@ where:
 - $f[x, y]$ is the pixel value in the spatial image,
 - $M$ and $N$ are the dimensions of the image,
 - $u$ and $v$ represent the spatial frequencies in the directions $x$ and $y$,
-- $j$ is the imaginary unit.
 
 When an image is transformed into the frequency domain with DFT2D, it is represented as a combination of low frequencies and high frequencies:
 
-- Low frequencies: These lie near the center of the frequency domain and represent the global information of the image, such as shapes, contours, and other broad and soft structures.
-- High frequencies: These are located farther from the center and represent fine details, such as edges, textures, and noise.
+- Low frequencies: these lie near the center of the frequency domain and represent the global information of the image, such as shapes, contours, and other broad and soft structures.
+- High frequencies: these are located farther from the center and represent fine details, such as edges, textures, and noise.
 
 The 2D DFT is separable along rows and columns, which means it can be calculated as the product of two 1D DFTs. Separable Fourier matrices along rows and columns, therefore, are computed as:
 
@@ -72,8 +69,6 @@ The signal-to-frequency transformation operation is done through the matrix-coef
 $$
 s = \Psi_{\text{row}}^H\ X\ \Psi_{\text{col}}^T
 $$
-
-The $s$ matrix contains the coefficients of the frequencies, that is, the intensities of the sine waves that make up the image. If the image has a simple structure or contains only a few relevant frequencies, the $s$ coefficients will be scattered.
 
 The Python code to perform such a mathematical formulation is given below:
 
@@ -110,11 +105,11 @@ $$D[n]=∑_k​x[k]g[2n−k]$$
 
 The 2D DWT extends the 1D DWT to two-dimensional images (data matrices). In this 2D version, you apply DWT separately to the rows and columns of the image:
 1. DWT on rows: each row of the image is subjected to DWT 1D, thus creating a low-frequency approximation matrix and a high-frequency detail matrix for each row
-2. DWT on the columns: the 1D DWT is applied separately to the columns of results obtained from the previous step (both approximations and horizontal details). Four sub-bands are then created
-    - LL: vertical approximation in the horizontal approximation matrix-low frequency
-    - LH: vertical approximation in the horizontal detail matrix-high frequency
-    - HL: vertical detail in the horizontal approximation matrix-high frequency
-    - HH: vertical detail in the horizontal detail matrix-high frequency
+2. DWT on the columns: the 1D DWT is applied separately to the columns of results obtained from the previous step (both approximations and horizontal details). Four sub-bands are then created:
+    - LL: vertical approximation in the horizontal approximation matrix (low frequency);
+    - LH: vertical approximation in the horizontal detail matrix (high frequency);
+    - HL: vertical detail in the horizontal approximation matrix (high frequency);
+    - HH: vertical detail in the horizontal detail matrix (high frequency).
 
 By setting an iterative level greater than 1, at each level the LL subband of the previous level is used and is decomposed back into four subbands, preserving the main structure of the signal in LL and obtaining finer and finer details in LH, HL, HH.
 
@@ -224,51 +219,13 @@ plt.show()
 ![Figure_12](https://github.com/user-attachments/assets/652e4226-5169-408e-bf5b-4d1885490f2e)
 
 
-## Comparison of FFT2D, wavelet and DCT: sparsity and computational complexity
+## Comparison of sparsity with FFT2D, wavelet and DCT
 
-In the context of sparse sensing and image compression, a comparison of three transforms: FFT2D, and DCT was carried out. The objective of the comparison is to analyze the following characteristics:
+In the context of the sparse sensinge of image compression, a comparison was made regarding the sparsity obtained through the three techniques used, with the use of different thresholds to establish the negligibility of the values obtained.
 
-1. Sparsity of transformations
-2. Computational Complexity
+As can be seen, the wavelet has a peculiarity: with a threshold of zero, many of its coefficients are exactly zero, resulting in a relatively high sparsity value even when the threshold is zero.
 
-The three transforms were applied to the image without dividing it into blocks, being the de facto mode of execution in the clinical setting.
-
-### 1. Sparsity of Transforms
-
-The sparsity of a transform is measured as the percentage of normalized values that are less than a predefined threshold. Normalization is done by dividing the absolute values of the transform by the maximum value of the transform, resulting in values between 0 and 1. The thresholds used to calculate sparsity are $t = 0$ and $t = 0.00001$, and sparsity is calculated as:
-
-$$Sparsità = \frac{\text{Numero di elementi sotto la soglia}}{\text{Numero totale di elementi}} \times 100$$
-
-### 2. Computational Complexity
-
-The computational complexity of each transform was measured in terms of execution time. The complexity of each method, expressed in O-large notation, is as follows:
-
-- FFT2D:
-  The two-dimensional FFT is an optimized version of the Fourier Transform. Its computational complexity is:
-
-  $$O(n^2 \log n)$$
-
-  This is because the FFT reduces the number of operations required by separating the calculations on the rows and columns of the image.
-
-- Wavelet:
-  The wavelet transform decompresses the image into a series of coefficients at different scales. Its computational complexity is:
-
-  $$O(n^2)$$
-
-  Wavelet is an iterative process that performs a multi-resolution transform, but requires fewer operations than a full transform.
-
-- DCT:
-  The Discrete Cosine Transform is used in compression applications, such as in JPEG. Its computational complexity is similar to that of the wavelet:
-
-  $$O(n^2)$$
-
-  DCT performs the transformation in the spatial domain of the image, but it is generally more expensive than FFT.
-
-### Results
-
-As can be seen, the wavelet has a peculiarity: with a threshold of zero, many of its coefficients are exactly zero, resulting in a relatively high sparsity value even when the threshold is zero. 
-
-In contrast, in the FFT and DCT transforms, with threshold equal to zero, no coefficient falls within that range. When the threshold value is increased, there is a spike in sparsity: many coefficients are eliminated, leading to a marked reduction in the amount of significant data and increasing sparsity considerably. 
+In contrast, in the FFT and DCT transforms, with threshold equal to zero, no coefficient falls within that range. When the threshold value is increased, however, there is a spike in sparsity: many coefficients are eliminated, leading to a marked reduction in the amount of significant data and increasing sparsity considerably.
 
 
 | Method    | Threshold   | Below Threshold (%)   | Total Size  

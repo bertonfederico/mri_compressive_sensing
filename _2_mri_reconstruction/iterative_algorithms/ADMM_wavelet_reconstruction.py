@@ -52,11 +52,10 @@ def admm_mri_wavelet_reconstruction(kspace_sub, mask, num_iters=100, wavelet='db
     u = np.zeros_like(img)
 
     # ADMM iterative reconstruction loop
-    for i in range(num_iters):
+    for _ in range(num_iters):
         
         # 1. Data fidelity step:
-        # Update img by enforcing data consistency in the Fourier domain
-        # This step retains sampled k-space values and fills in unsampled areas
+        # Apply the mask in the Fourier domain to retain sampled values and replace unsampled values
         img = ifft2c(mask * kspace_sub + (1 - mask) * fft2c(z - u))
 
         # 2. Regularization step:
