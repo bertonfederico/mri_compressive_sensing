@@ -15,5 +15,5 @@ The second sub-project focuses on FFT2D, as MRI images are already represented i
 ## Optimization techniques for image reconstruction 🧩🔄
 
 The third sub-project focuses on the optimization techniques used to reconstruct or approximate the original image from the compressed data. Two main algorithms were explored: ADMM (Alternating Direction Method of Multipliers) and ISTA (Iterative Shrinkage Thresholding Algorithm), with the aim of reducing the reconstruction error. In addition,, two regularization techniques were used: the Wavelet transform and Total Variation, which aim to preserve the main features of the image during the reconstruction process. 
-- Link for developed code: [tap here](https://github.com/bertonfederico/mri_compressive_sensing/blob/a7b0b243e7640aa5545b67505fa9105cf5a8a54e/_2_mri_reconstruction)
-- Link for related README.md file: [tap here](https://github.com/bertonfederico/mri_compressive_sensing/blob/a7b0b243e7640aa5545b67505fa9105cf5a8a54e/_2_mri_reconstruction/README.md)
+- Link for developed code: [tap here](https://github.com/bertonfederico/mri_compressive_sensing/blob/00ee82e94d2342cb5d11326091b7d0620547064b/_2_mri_reconstruction)
+- Link for related README.md file: [tap here](https://github.com/bertonfederico/mri_compressive_sensing/blob/00ee82e94d2342cb5d11326091b7d0620547064b/_2_mri_reconstruction/README.md)
