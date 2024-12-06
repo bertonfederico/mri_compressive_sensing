@@ -4,15 +4,21 @@ This project aims to study the compression of magnetic resonance imaging (MRI) i
 
 ## Study of sparsity in medical images 💡📉
 The first sub-project explores possible ways to generate sparsity in medical images. Specifically, several transformations, such as two-dimensional FFT (FFT2D), wavelets, and the Discrete Cosine Transform (DCT), were tested, with the goal of identifying which of these techniques can best represent medical images in sparse form. 
-- Link for developed code: [tap here](https://github.com/bertonfederico/mri_compressive_sensing/tree/a7b0b243e7640aa5545b67505fa9105cf5a8a54e/_0_sparse_representation)
-- Link for related README.md file: [tap here](https://github.com/bertonfederico/mri_compressive_sensing/blob/a7b0b243e7640aa5545b67505fa9105cf5a8a54e/_0_sparse_representation/README.md)
+- Link for developed code: [tap here](https://github.com/bertonfederico/mri_compressive_sensing/blob/00a3660edfe9c8b5d001937e91db49a899e27046/_0_sparse_representation)
+- Link for related README.md file: [tap here](https://github.com/bertonfederico/mri_compressive_sensing/blob/00a3660edfe9c8b5d001937e91db49a899e27046/_0_sparse_representation/README.md)
 
 ## FFT2D sampling for MRI images 🎯📊
 The second sub-project focuses on FFT2D, as MRI images are already represented in this format. In particular, the sampling methods of this domain are studied to reduce the amount of data needed. Several types of sampling masks were explored: a random mask, a centered Gaussian mask and a mask that selects values in the FFT2D that exceed a certain amplitude threshold. In addition, two encoding modes for transmitting sampled data were explored: COO (Coordinate List) and RLE (Run-Length Encoding).
-- Link for developed code: [tap here](https://github.com/bertonfederico/mri_compressive_sensing/blob/a7b0b243e7640aa5545b67505fa9105cf5a8a54e/_1_sparse_sampling)
-- Link for related README.md file: [tap here](https://github.com/bertonfederico/mri_compressive_sensing/blob/a7b0b243e7640aa5545b67505fa9105cf5a8a54e/_1_sparse_sampling/README.md)
+- Link for developed code: [tap here](https://github.com/bertonfederico/mri_compressive_sensing/blob/00a3660edfe9c8b5d001937e91db49a899e27046/_1_sparse_sampling)
+- Link for related README.md file: [tap here](https://github.com/bertonfederico/mri_compressive_sensing/blob/00a3660edfe9c8b5d001937e91db49a899e27046/_1_sparse_sampling/README.md)
 
 ## Optimization techniques for image reconstruction 🧩🔄
 The third sub-project focuses on the optimization techniques used to reconstruct or approximate the original image from the compressed data. Two main algorithms were explored: ISTA (Iterative Shrinkage Thresholding Algorithm) and ADMM (Alternating Direction Method of Multipliers), with the aim of reducing the reconstruction error. In addition, two regularization techniques were used: the Wavelet transform and Total Variation, which aim to preserve the main features of the image during the reconstruction process. 
-- Link for developed code: [tap here](https://github.com/bertonfederico/mri_compressive_sensing/blob/8bf0a76861771bff9b10f03cef6cab3ca6a90f95/_2_mri_reconstruction)
-- Link for related README.md file: [tap here](https://github.com/bertonfederico/mri_compressive_sensing/blob/8bf0a76861771bff9b10f03cef6cab3ca6a90f95/_2_mri_reconstruction/README.md)
+- Link for developed code: [tap here](https://github.com/bertonfederico/mri_compressive_sensing/blob/00a3660edfe9c8b5d001937e91db49a899e27046/_2_mri_reconstruction)
+- Link for related README.md file: [tap here](https://github.com/bertonfederico/mri_compressive_sensing/blob/00a3660edfe9c8b5d001937e91db49a899e27046/_2_mri_reconstruction/README.md)
+
+## Final remarks
+In conclusion, the analysis of sparsity techniques revealed that wavelet-based methods provide optimal sparsity for magnetic resonance images. While k-space with 2D Fourier transform delivers satisfactory results, wavelet techniques stand out for their ability to enhance image representation, ensuring more efficient compression. Nevertheless, k-space remains of paramount importance in MRI, as it is the acquisition method in clinical examinations.
+Regarding sampling analysis, it was found that selecting the highest values in k-space proves to be a significantly more effective strategy than the centered Gaussian approach. Although the Gaussian method is less optimal, it has the advantage of allowing the use of fixed, predefined masks. On the other hand, the strategy of selecting the highest values requires an advanced system to transmit not only the data but also their positions within the k-space matrix (e.g., through formats such as COO or RLE). However, this added complexity is amply compensated by the resulting high sparsity.
+Finally, in the analysis of optimization algorithms for image reconstruction, all methods employed were shown to be effective, producing reconstructions that closely resemble the original image. However, the algorithm combining Total Variation and ADMM proved to be particularly efficient, achieving higher quality results in shorter computational times.
+
