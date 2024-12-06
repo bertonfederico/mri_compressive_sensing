@@ -174,7 +174,7 @@ $$
 - **Update of $z$**: minimizes the total variance term by performing a TV regularization via a proximal operator, as before:
 
 $$
-z^{(k+1)} = \text{proximal}_{\frac{\lambda}{\rho}} \left( x^{(k+1)} + u^k \right)
+z^{(k+1)} = \text{proximal}_{\frac{\lambda}{\rho} E^{TV}} \left( x^{(k+1)} + u^k \right)
 $$
 
 - **Update of the dual variable $u$**:
