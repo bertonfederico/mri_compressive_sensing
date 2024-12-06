@@ -49,7 +49,7 @@ When an image is transformed into the frequency domain with DFT2D, it is represe
 The 2D DFT is separable along rows and columns, which means it can be calculated as the product of two 1D DFTs. Separable Fourier matrices along rows and columns, therefore, are computed as:
 
 $$
-\Psi_{\text{row}}[i, j] = e^{-2\pi i \frac{ij}{n}} \quad \text{e} \quad \Psi_{\text{col}}[i, j] = e^{-2pi i \frac{ij}{m}}
+\Psi_{\text{row}}[i, j] = e^{-2\pi \frac{ij}{n}} \quad \text{e} \quad \Psi_{\text{col}}[i, j] = e^{-2\pi \frac{ij}{m}}
 $$
 
 where \(i, j\) are the row and column indices. The image $X$ is then represented as:
