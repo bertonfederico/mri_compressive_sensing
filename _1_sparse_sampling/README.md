@@ -14,11 +14,9 @@ Isometry Property (RIP) ensures that the subset of data sampled from the k-space
 $$(1−δ_s) \|x\|_2^2 ​\leq \|A\ x\|_2^2 ​\leq (1+δ_s)\|x\|_2^2 $$
 
 To explore this idea, we can apply different sampling techniques in the k-space after performing a 2D FFT transform of the MRI image. To simplify the sampling process, a mask was chosen because the sampling modes based on it are more intuitive and computationally less complex. Three different sampling modes are considered for compression:
-
-1. Gaussian sampling: in this mode, k-space values are sampled following a Gaussian distribution, concentrating the sampling more toward the outside of the k-space.
    
-2. Random sampling: in this mode, k-space values are chosen randomly, without any priority, to create a sample selection that does not follow a specific pattern.
-
+1. Random sampling: in this mode, k-space values are chosen randomly, without any priority, to create a sample selection that does not follow a specific pattern.
+2. Gaussian sampling: in this mode, k-space values are sampled following a Gaussian distribution, concentrating the sampling more toward the center of the k-space.
 3. Threshold sampling: here, only the coefficients in the k-space that exceed a certain amplitude threshold are selected, excluding the lowest values, which generally contain less meaningful information for the image.
 
 To compare these modes, the same percentage (10%) of the highest values is taken and the others are set to zero. This approach allows observing the effect of each sampling type on the final image quality and data compression, while using the same amount of data. The results show that the optimal mode is the one that selects the highest coefficients, since it retains the most relevant information for image reconstruction. However, the Gaussian mode does not differ much from it, since the FFT2D in the k-space tends to concentrate mainly around the center, which makes Gaussian sampling similar to sampling the highest values.
@@ -39,6 +37,8 @@ To address this need, two ways to represent the sampled data were tested:
 1. COO (Coordinate Format): this mode repress stores only nonzero values and their positions.
 
 2. RLE (Run-Length Encoding): RLE is a compression technique that represents consecutive sequences of equal values (runs) as a pair of value and frequency (i.e., the value itself and the number of times it repeats). In the context of k-space, this mode can be useful for compressing areas where many coefficients are zero or have same values, reducing the amount of data to be transmitted.
+
+The following are the results of experiments carried out in this regard:
 
 <table align="center">
   <tr>
