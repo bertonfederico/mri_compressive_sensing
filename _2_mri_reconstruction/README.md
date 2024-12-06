@@ -6,12 +6,7 @@ In this section, after completing the sparse representation of the image and its
 
 ## ISTA (Iterative Shrinkage-Thresholding Algorithm)
 
-The ISTA algorithm is an iterative technique used to solve optimization problems in which an attempt is made to minimize an objective function consisting of two main terms:
-
-- Fitting error: represents the discrepancy between the estimate and the observed data.
-- Regularization: penalizes nonsparsity solutions, that is, solutions in which many variables are nonzero.
-
-The problem then shows itself in the following way:
+The ISTA (Iterative Shrinkage-Thresholding Algorithm) algorithm is an iterative method used to solve optimization problems, particularly for minimizing functions with penalty terms, such as the L1 norm. The algorithm alternates between parameter updating and thresholding steps to promote sparsity of the solution. The problem then shows itself in the following way:
 
 $$
 \min_x J(x) + \lambda \|x\|_1
@@ -52,10 +47,10 @@ $$
 
 The algorithm can then be implemented in the following way:
 
-1. **Descending gradient step**: the residual $r = y - \Phi(x)$ is calculated, where $\Phi$ represents the transformation related to the FFT and the undersampling mask. Next, a descending gradient step is performed:
+1. **Descending gradient step**: the residual   $r = \text{FFT2D}(x) - \text{FFT2D}(x_{\text{init}})$   is calculated. Next, a descending gradient step is performed:
 
 $$
-x_{\text{temp}}^{(k+1)} = x^k - \alpha \nabla J(x^k) = x^k + \alpha \Phi_T(r)
+x_{\text{temp}}^{(k+1)} = x^k - \alpha \nabla J(x^k) = x^k + \alpha \ \text{FFT2D}^{-1}(r)
 $$
 
 2. **Soft-thresholding step on Wavelet coefficients**: after the gradient step, the code performs a Wavelet decomposition on the updated $x_{\text{temp}}^{(k+1)}$ image; this transformation decomposes the image into a series of coefficients at different levels of resolution. Next, soft-thresholding is applied to each coefficient: at this point, small coefficients are reduced to zero, leading to a more sparse solution.
