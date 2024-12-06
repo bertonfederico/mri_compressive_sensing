@@ -98,17 +98,15 @@ The Discrete Wavelet Transform (DWT) is a powerful technique for analyzing signa
 
 In a one-dimensional context, DWT is used to separate an $x[n]$ signal into two main components:
 - approximation(low-frequency), via a low-pass filtering
-$$A[n]=∑_k​x[k]h[2n−k]$$
 - details (high frequency), via a high-pass filtering
-$$D[n]=∑_k​x[k]g[2n−k]$$
 
 The 2D DWT extends the 1D DWT to two-dimensional images (data matrices). In this 2D version, you apply DWT separately to the rows and columns of the image:
 1. DWT on rows: each row of the image is subjected to DWT 1D, thus creating a low-frequency approximation matrix and a high-frequency detail matrix for each row
 2. DWT on the columns: the 1D DWT is applied separately to the columns of results obtained from the previous step (both approximations and horizontal details). Four sub-bands are then created:
-    - LL: vertical approximation in the horizontal approximation matrix (low frequency);
-    - LH: vertical approximation in the horizontal detail matrix (high frequency);
-    - HL: vertical detail in the horizontal approximation matrix (high frequency);
-    - HH: vertical detail in the horizontal detail matrix (high frequency).
+    - LL: vertical approximation in the horizontal approximation matrix;
+    - LH: vertical approximation in the horizontal detail matrix;
+    - HL: vertical detail in the horizontal approximation matrix;
+    - HH: vertical detail in the horizontal detail matrix.
 
 By setting an iterative level greater than 1, at each level the LL subband of the previous level is used and is decomposed back into four subbands, preserving the main structure of the signal in LL and obtaining finer and finer details in LH, HL, HH.
 
@@ -220,7 +218,7 @@ plt.show()
 
 ## Comparison of sparsity with FFT2D, wavelet and DCT
 
-In the context of the sparse sensinge of image compression, a comparison was made regarding the sparsity obtained through the three techniques used, with the use of different thresholds to establish the negligibility of the values obtained.
+In the context of the sparse sensing and image compression, a comparison was made regarding the sparsity obtained through the three techniques used, with the use of different thresholds to establish the negligibility of the values obtained.
 
 As can be seen from the data below, the wavelet has a peculiarity: with a threshold of zero, many of its coefficients are exactly zero, resulting in a relatively high sparsity value even when the threshold is zero.
 
