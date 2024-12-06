@@ -8,7 +8,7 @@ In this section, after completing the sparse representation of the image and its
 
 The ISTA algorithm is an iterative technique used to solve optimization problems in which an attempt is made to minimize an objective function consisting of two main terms:
 
-- Fitting error (data fidelity term): represents the discrepancy between the estimate and the observed data.
+- Fitting error: represents the discrepancy between the estimate and the observed data.
 - Regularization: penalizes nonsparsity solutions, that is, solutions in which many variables are nonzero.
 
 The problem then shows itself in the following way:
@@ -158,12 +158,6 @@ $$
 x^* = \arg \min_x \left( \frac{1}{2} \| \text{mask} \cdot (\text{FFT2D}(x) - \text{FFT2D}(x_{\text{init}})) \|_2^2 + E^{\text{TV}}(x) \right)
 $$
 
-Since $E^{\text{TV}}$ is nonlinear and complex, the problem is solved numerically by the gradient descent method. The algorithm is then implemented iteratively in this way:
-- Calculation of the gradients in the vertical and horizontal directions, using finite differences as an estimate.
-- Combining the horizontal and vertical variations, adding a stability term $\epsilon$ to make up for the case where the previously calculated differences are zero.
-- Calculating the divergence, normalizing the gradients, and calculating the sum of the contributions in the two directions.
-- At each iteration, updating image pixels by moving in the direction opposite to the gradient.
-
 In primal-dual form, the problem can be expressed as:
 
 $$
@@ -187,5 +181,31 @@ $$
 
 $$
 u^{(k+1)} = u^k - z^{(k+1)} + x^{(k+1)}
+$$
+
+Since $E^{\text{TV}}$ is nonlinear and complex, the problem is solved numerically by the gradient descent method. The algorithm is then implemented iteratively in this way:
+- calculation of the gradients in the vertical and horizontal directions ($grad_x$ e $grad_y$), using finite differences as an estimate of it;
+- combining the horizontal and vertical variations, adding a stability term ϵ to make up for the case where the previously calculated differences are zero;
+
+$$
+\text{norm} = \sqrt{\text{grad}_x^2 + \text{grad}_y^2 + \epsilon}
+$$
+
+- calculating normalizing the gradients:
+
+$$
+\text{div}_x = \frac{\text{grad}_x}{\text{norm}}, \quad \text{div}_y = \frac{\text{grad}_y}{\text{norm}}
+$$
+
+- calculation of total divergence for each pixel:
+
+$$
+\text{div} = \text{div}_x + \text{div}_y
+$$
+
+- at each iteration, updating image pixels by moving in the direction opposite to the gradient:
+
+$$
+\text{img} = \text{img} + \tau \cdot \text{div}
 $$
 
