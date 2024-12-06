@@ -26,11 +26,11 @@ To compare these modes, the same percentage (10%) of the highest values is taken
 
 ## Ways of sharing data after FFT2D sampling
 
-Once k-space sampling has been performed, it is important to consider how the data can be shared effectively. Therefore, it is possible to share the k-space of the MRI directly, but after sampling, it becomes necessary to know the modes by which the data were sampled in order to reconstruct them correctly.
+Once k-space sampling has been performed, it is important to consider how the data can be shared effectively. Therefore, it becomes necessary to know the modes by which the data were sampled in order to reconstruct them correctly.
 
 - Gaussian and random modes: for these two modes, a fixed sampling mask could be used, which would eliminate the need to transmit additional information about how the data were sampled. This solution would simplify data management after sampling.
 
-- Mode of selecting the most significant values: in the case of sampling based on selecting the highest values, it is necessary to somehow share additional information regarding the location of the sampled values in the k-space. Since the values are selected non-uniformly, it is necessary to know exactly which coefficients were chosen in order to reconstruct the image correctly.
+- Mode of selecting the most significant values: in the case of sampling based on selecting the highest values, it is necessary to somehow share additional information regarding the location of the sampled values in the k-space.
 
 To address this need, two ways to represent the sampled data were tested:
 
