@@ -55,7 +55,7 @@ $$
 where \(i, j\) are the row and column indices. The image $X$ is then represented as:
 
 $$
-X = \Psi_{\text{row}}\ s\  \Psi_{\text{col}}^H
+X = \Psi_{\text{row}}^H\ s\  \Psi_{\text{col}}^H
 $$
 
 where:
@@ -66,7 +66,7 @@ where:
 The signal-to-frequency transformation operation is done through the matrix-coefficient product:
 
 $$
-s = \Psi_{\text{row}}^H\ X\ \Psi_{\text{col}}^T
+s = \Psi_{\text{row}}\ X\ \Psi_{\text{col}}^T
 $$
 
 The Python code to perform such a mathematical formulation is given below:
