@@ -189,7 +189,11 @@ $$
 - calculating normalizing the gradients:
 
 $$
-\text{div}_x = \frac{\text{grad}_x}{\text{norm}}, \quad \text{div}_y = \frac{\text{grad}_y}{\text{norm}}
+\text{div}_x = \frac{\text{grad}_x}{\text{norm}\_{x}} - \frac{\text{grad}\_{x\-1}}{\text{norm}\_{x\-1}}
+$$
+
+$$
+\text{div}_y = \frac{\text{grad}_y}{\text{norm}\_{y}} - \frac{\text{grad}\_{y\-1}}{\text{norm}\_{y\-1}}
 $$
 
 - calculation of total divergence for each pixel:
